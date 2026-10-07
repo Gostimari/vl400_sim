@@ -1,0 +1,607 @@
+
+<robot name="vl400" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+  <xacro:property name="M_PI" value="3.14159"/>
+
+  <!-- Base Size -->
+  <xacro:property name="base_x_size" value="2.21" />
+  <xacro:property name="base_y_size" value="1.36" />
+  <xacro:property name="base_z_size" value="1.2" />
+
+  <!-- Wheel Mounting Positions -->
+  <xacro:property name="wheelbase" value="0.5120" />
+  <xacro:property name="track" value="0.5708" />
+  <xacro:property name="wheel_vertical_offset" value="0.2" />
+
+  <!-- Wheel Properties -->
+  <xacro:property name="wheel_length" value="0.3" />
+  <xacro:property name="wheel_radius" value="0.45" />
+
+  <!-- ADD SENTRY and sensors xacro -->
+  <xacro:include filename="$(find vl400_description)/urdf/sentry.xacro"/>
+
+  <!--  INERTIA COMPUTATION-->
+    <!--cylinder-->
+  <xacro:macro name="cylinder_inertia" params="r l mass">
+    <inertial>
+    <mass value="${mass}" />
+    <origin xyz="0 0 0" />
+    <inertia ixx="${mass*(3*r*r+l*l)/12}" ixy = "0" ixz = "0"
+                iyy="${mass*(r*r)/2}" iyz = "0" izz="${mass*(3*r*r+l*l)/12}" />
+    </inertial>
+  </xacro:macro>
+
+  <!--sphere-->
+  <xacro:macro name="sphere_inertial" params="radius mass">
+    <inertial>
+      <mass value="${mass}" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="${0.4 * mass * radius * radius}" ixy="0.0" ixz="0.0"
+        iyy="${0.4 * mass * radius * radius}" iyz="0.0"
+        izz="${0.4 * mass * radius * radius}" />
+    </inertial>
+  </xacro:macro>
+
+  <!--box-->
+  <xacro:macro name="box_inertial" params="x y z mass">
+    <inertial>
+      <mass value="${mass}" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="${0.0833333 * mass * (y*y + z*z)}" ixy="0.0" ixz="0.0"
+        iyy="${0.0833333 * mass * (x*x + z*z)}" iyz="0.0"
+        izz="${0.0833333 * mass * (x*x + y*y)}" />
+    </inertial>
+  </xacro:macro>
+
+  <link name="chassis_link">
+   <xacro:box_inertial  x="${base_x_size}" y="${base_y_size}" z="${base_z_size}" mass="50" />
+   <visual>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <geometry>
+      <box size="${base_x_size} ${base_y_size} ${base_z_size}"/>
+    </geometry>
+    <material name="secondary">
+      <color rgba="0.5 0.5 0.5 1"/>
+    </material>
+   </visual>
+   <collision>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <geometry>
+      <box size="${base_x_size} ${base_y_size} ${base_z_size}"/>
+    </geometry>
+   </collision>
+</link>
+
+<link name="base_footprint" />
+<joint name="chassis_joint" type="fixed">
+  <origin xyz="0 0 ${-(base_z_size/2 + wheel_vertical_offset)}" rpy="0 0 0" />
+  <parent link="chassis_link" />
+  <child link="base_footprint" />
+</joint>
+
+<!-- #######################################################################################################-->
+<link name="right_wheel_link">
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="7" />
+  <collision>
+  <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+  <geometry>
+      <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="right_wheel_joint" type="continuous">
+  <origin rpy="0 0 0" xyz="0 ${wheel_length/2 + base_y_size/2} ${-(base_z_size/2 + wheel_vertical_offset - wheel_radius + 0.001)}"/>
+  <child link="right_wheel_link" />
+  <parent link="chassis_link"/>
+  <axis rpy="0 0 0" xyz="0 1 0"/>
+</joint>
+
+<!-- #######################################################################################################-->
+<link name="right_wheel_fake_link">
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="0.1" />
+   <visual>
+    <origin rpy="0 0 -1.5707" xyz="0 0 0"/>
+    <geometry>
+      <mesh filename="package://vl400_description/meshes/wheel_v2.stl" scale="0.0013 0.0015 0.0015"/>
+    </geometry>
+    <material name="black">
+      <color rgba="0.05 0.05 0.05 1"/>
+    </material>
+   </visual>
+</link>
+
+<joint name="right_wheel_fake_joint" type="continuous">
+  <origin rpy="0 0 0" xyz="${-(wheel_radius)} ${wheel_length/2 + base_y_size/2 - 0.15} ${-(base_z_size/2 + wheel_vertical_offset - wheel_radius)}"/>
+  <child link="right_wheel_fake_link" />
+  <parent link="chassis_link"/>
+  <axis rpy="0 0 0" xyz="0 1 0"/>
+</joint>
+
+<!-- #######################################################################################################-->
+
+<link name="left_wheel_link">
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="7" />
+  <collision>
+  <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+  <geometry>
+      <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="left_wheel_joint" type="continuous">
+  <origin rpy="0 0 0" xyz="0 ${-(wheel_length/2 + base_y_size/2)} ${-(base_z_size/2 + wheel_vertical_offset - wheel_radius + 0.001)}"/>
+  <child link="left_wheel_link" />
+  <parent link="chassis_link"/>
+  <axis rpy="0 0 0" xyz="0 1 0"/>
+</joint>
+<!-- #######################################################################################################-->
+<link name="left_wheel_fake_link">
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="0.1" />
+   <visual>
+    <origin rpy="0 0 1.5707" xyz="0 0 0"/>
+    <geometry>
+      <mesh filename="package://vl400_description/meshes/wheel_v2.stl" scale="0.0013 0.0015 0.0015"/>
+    </geometry>
+    <material name="black">
+      <color rgba="0.05 0.05 0.05 1"/>
+    </material>
+   </visual>
+</link>
+
+<joint name="left_wheel_fake_joint" type="continuous">
+  <origin rpy="0 0 0" xyz="${-(wheel_radius)} ${-(wheel_length/2 + base_y_size/2 - 0.15)} ${-(base_z_size/2 + wheel_vertical_offset - wheel_radius)}"/>
+  <child link="left_wheel_fake_link" />
+  <parent link="chassis_link"/>
+  <axis rpy="0 0 0" xyz="0 1 0"/>
+</joint>
+
+<!-- #######################################################################################################-->
+<link name="support_right_wheel_link">
+  <visual>
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="0.2"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.05 0.05 0.05 1"/>
+      </material>
+    </visual>
+  <collision>
+    <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="0.2"/>
+      </geometry>
+  </collision>
+</link>
+
+<joint name="support_right_wheel_joint" type="fixed">
+ <origin rpy="0 0 0" xyz="${(wheel_radius +0.3)} ${-(wheel_length/2 + base_y_size/2)} ${-(base_z_size/2 + wheel_vertical_offset - 0.2)}"/>
+  <child link="support_right_wheel_link" />
+  <parent link="chassis_link"/>
+</joint>
+
+<!-- #######################################################################################################-->
+<link name="support_left_wheel_link">
+  <visual>
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="0.2"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.05 0.05 0.05 1"/>
+      </material>
+    </visual>
+  <collision>
+    <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="0.2"/>
+      </geometry>
+  </collision>
+</link>
+
+<joint name="support_left_wheel_joint" type="fixed">
+ <origin rpy="0 0 0" xyz="${(wheel_radius +0.3)} ${(wheel_length/2 + base_y_size/2)} ${-(base_z_size/2 + wheel_vertical_offset - 0.2)}"/>
+  <child link="support_left_wheel_link" />
+  <parent link="chassis_link"/>
+</joint>
+
+<!-- ================================================================= -->
+<!-- Belt collision geometry, 1 cm outside the wheels. Coordinates are
+     in the track link frame. Lateral offset (y) aligns the belt with the
+     wheels: left track link sits at y=+0.70, right at y=-0.98, wheels at
+     +/-0.83. Friction is applied to all belt collisions via the
+     <gazebo reference> blocks below (high longitudinal grip, low
+     lateral grip so the robot skid-steers). -->
+<xacro:macro name="belt_collisions" params="y_off">
+  <!-- Continuous track band: one closed mesh (generated at build time by
+       belt_band_generator) wrapping around all three belt wheels. It is
+       static; only the cleats animate on top of it. -->
+  <visual>
+    <origin rpy="0 0 0" xyz="0 ${y_off} 0"/>
+    <geometry>
+      <mesh filename="package://vl400_description/meshes/belt_band.dae"/>
+    </geometry>
+    <material name="tread">
+      <color rgba="0.05 0.05 0.05 1"/>
+    </material>
+  </visual>
+  <!-- Belt collision: flat bottom box (like the official gz-sim tracked
+       vehicle example) plus rounded ends. On a mesh terrain the flat box
+       gives many contact points; the cylinders roll over edges. -->
+  <collision>
+    <origin rpy="0 0 0" xyz="1.28 ${y_off} 0.09"/>
+    <geometry>
+      <box size="1.25 0.3 0.1"/>
+    </geometry>
+  </collision>
+  <collision>
+    <origin rpy="1.5708 0 0" xyz="1.005 ${y_off} 0.501"/>
+    <geometry>
+      <cylinder radius="0.46" length="0.3"/>
+    </geometry>
+  </collision>
+  <collision>
+    <origin rpy="1.5708 0 0" xyz="1.755 ${y_off} 0.25"/>
+    <geometry>
+      <cylinder radius="0.21" length="0.3"/>
+    </geometry>
+  </collision>
+</xacro:macro>
+
+<gazebo reference="track_left_wheel_link">
+  <mu1>0.7</mu1>
+  <mu2>150</mu2>
+  <fdir1>0 1 0</fdir1>
+</gazebo>
+
+<gazebo reference="track_right_wheel_link">
+  <mu1>0.7</mu1>
+  <mu2>150</mu2>
+  <fdir1>0 1 0</fdir1>
+</gazebo>
+
+<!-- Skid plates: on rough terrain the chassis belly, the tail stabilizer
+     and the support wheels can rest on bumps while the belt hangs in
+     the air. Near-zero friction lets those parts slide instead of
+     anchoring the robot; the belt supplies all the traction. Note the
+     URDF->SDF converter applies each block to the collisions of that
+     exact link only, so every fixed-jointed body part needs its own
+     block (they get lumped into chassis_link but keep their names). -->
+<gazebo reference="chassis_link">
+  <mu1>0.05</mu1>
+  <mu2>0.05</mu2>
+</gazebo>
+
+<gazebo reference="stabilizer_link">
+  <mu1>0.05</mu1>
+  <mu2>0.05</mu2>
+</gazebo>
+
+<gazebo reference="support_left_wheel_link">
+  <mu1>0.05</mu1>
+  <mu2>0.05</mu2>
+</gazebo>
+
+<gazebo reference="support_right_wheel_link">
+  <mu1>0.05</mu1>
+  <mu2>0.05</mu2>
+</gazebo>
+
+<gazebo reference="tool_link">
+  <mu1>0.05</mu1>
+  <mu2>0.05</mu2>
+</gazebo>
+
+<!-- Wheels inside the belt: spin freely if they ever touch the ground. -->
+<gazebo reference="right_wheel_link">
+  <mu1>0.05</mu1>
+  <mu2>0.05</mu2>
+</gazebo>
+
+<gazebo reference="left_wheel_link">
+  <mu1>0.05</mu1>
+  <mu2>0.05</mu2>
+</gazebo>
+
+<!-- Tracked-vehicle conversion: the track links carry the belt        -->
+<!-- collision and drive the robot via TrackController +               -->
+<!-- TrackedVehicle. The joints are revolute with zero limits so the   -->
+<!-- links survive URDF -> SDF conversion (fixed joints get lumped     -->
+<!-- into the parent, which would make the tracks invisible to the    -->
+<!-- plugins).                                                         -->
+<!-- ================================================================= -->
+
+<link name="track_left_wheel_link">
+  <!-- Belt collision only: the visible track is the animated link chain
+       generated below (the old Tracks STL side panels were removed). -->
+  <inertial>
+      <!-- Belt mass, centered between the belt wheels (the link origin
+           itself sits ~1 m behind the drive wheel, which would tip the
+           robot backwards onto its tail stabilizer). -->
+      <origin xyz="1.38 0 0.3755"/>
+      <mass value="5"/>
+      <inertia ixx="0.37" ixy="0" ixz="0" iyy="0.55" iyz="0" izz="0.5"/>
+    </inertial>
+  <xacro:belt_collisions y_off="0.13"/>
+</link>
+
+<joint name="track_left_wheel_joint" type="revolute">
+ <origin rpy="0 0 0" xyz="-1.005 ${(base_y_size/2 + wheel_length/2 - 0.13)} -0.85"/>
+  <child link="track_left_wheel_link" />
+  <parent link="chassis_link"/>
+  <axis xyz="0 1 0"/>
+  <limit lower="0" upper="0" effort="1000" velocity="0"/>
+</joint>
+
+<link name="track_right_wheel_link">
+  <!-- Belt collision only: the visible track is the animated link chain
+       generated below (the old Tracks STL side panels were removed). -->
+  <inertial>
+      <!-- Belt mass, centered between the belt wheels (the link origin
+           itself sits ~1 m behind the drive wheel, which would tip the
+           robot backwards onto its tail stabilizer). -->
+      <origin xyz="1.38 0 0.3755"/>
+      <mass value="5"/>
+      <inertia ixx="0.37" ixy="0" ixz="0" iyy="0.55" iyz="0" izz="0.5"/>
+    </inertial>
+  <xacro:belt_collisions y_off="0.15"/>
+</link>
+
+<joint name="track_right_wheel_joint" type="revolute">
+ <origin rpy="0 0 0" xyz="-1.005 ${-(base_y_size/2 + wheel_length)} -0.85"/>
+  <child link="track_right_wheel_link" />
+  <parent link="chassis_link"/>
+  <axis xyz="0 1 0"/>
+  <limit lower="0" upper="0" effort="1000" velocity="0"/>
+</joint>
+
+
+<!-- ================================================================= -->
+<!-- Animated tread plates (visual only). Each plate hangs on a polar -->
+<!-- 2-DOF chain: track link > revolute(y) > arm > prismatic(x) >      -->
+<!-- plate. The vl400_track_anim TrackVisual system drives the joints  -->
+<!-- along the belt loop (convex hull of the two belt circles).        -->
+<!-- ================================================================= -->
+<xacro:property name="track_anim_plate_count" value="24" />
+<!-- Loop center (x z) in the track link frame: centroid of the three
+     belt circles (0.555, 0.501), (1.005, 0.501) and (1.755, 0.25). -->
+<xacro:property name="track_anim_center_x" value="1.105" />
+<xacro:property name="track_anim_center_z" value="0.4173" />
+
+<xacro:macro name="track_plate" params="side y_off prefix i">
+  <link name="${prefix}_arm_${i}">
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+  <joint name="${prefix}_arm_j_${i}" type="continuous">
+    <origin xyz="${track_anim_center_x} ${y_off} ${track_anim_center_z}" rpy="0 0 0"/>
+    <parent link="track_${side}_wheel_link"/>
+    <child link="${prefix}_arm_${i}"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+  <link name="${prefix}_plate_${i}">
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+    <!-- One cleat riding the continuous band. Link frame: x radial
+         (away from the belt center), y lateral, z along the belt path.
+         The cleat is half embedded in the band, half sticking out as
+         the grouser; the band itself is the continuous track
+         surface. -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.016 0.30 0.06"/>
+      </geometry>
+      <material name="tread">
+        <color rgba="0.05 0.05 0.05 1"/>
+      </material>
+    </visual>
+  </link>
+  <joint name="${prefix}_slide_j_${i}" type="prismatic">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="${prefix}_arm_${i}"/>
+    <child link="${prefix}_plate_${i}"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="0.0" upper="1.2" effort="1000" velocity="10"/>
+  </joint>
+</xacro:macro>
+
+<xacro:macro name="track_plates" params="side y_off prefix n">
+  <xacro:if value="${n > 0}">
+    <xacro:track_plate side="${side}" y_off="${y_off}" prefix="${prefix}" i="${n - 1}"/>
+    <xacro:track_plates side="${side}" y_off="${y_off}" prefix="${prefix}" n="${n - 1}"/>
+  </xacro:if>
+</xacro:macro>
+
+<xacro:track_plates side="left" y_off="0.13" prefix="track_anim_left" n="${track_anim_plate_count}"/>
+<xacro:track_plates side="right" y_off="0.15" prefix="track_anim_right" n="${track_anim_plate_count}"/>
+
+
+<!-- #######################################################################################################-->
+<link name="stetic_body_link">
+  <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+         <mesh filename="package://vl400_description/meshes/Hood.STL" scale="0.002 0.0015 0.0015"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.0 0.7 0.0 1"/>
+      </material>
+    </visual>
+</link>
+
+<joint name="stetic_body_joint" type="fixed">
+ <origin rpy="1.5707 0 1.5707" xyz="-0.20 ${-(base_y_size/2 + 0.05)} ${-(base_z_size/2 -0.65)}"/>
+  <child link="stetic_body_link" />
+  <parent link="chassis_link"/>
+</joint>
+
+<!-- #######################################################################################################-->
+<link name="stetic_tube_link">
+  <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+         <mesh filename="package://vl400_description/meshes/Tubular.STL" scale="0.0023 0.001 0.003"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="0.8 0.5 0.0 1"/>
+      </material>
+    </visual>
+</link>
+
+<joint name="stetic_tube_joint" type="fixed">
+ <origin rpy="1.5707 0 1.5707" xyz="-0.4 ${-(base_y_size/2 +0.14)} ${-(base_z_size/2 - 0.45)}"/>
+  <child link="stetic_tube_link" />
+  <parent link="chassis_link"/>
+</joint>
+<!-- #######################################################################################################-->
+<link name="tool_link">
+  <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+         <mesh filename="package://vl400_description/meshes/Mulcher_v2.STL" scale="0.0012 0.0012 0.0012"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.0 0.7 0.0 1"/>
+      </material>
+    </visual>
+  <collision>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+        <mesh filename="package://vl400_description/meshes/Mulcher_v2.STL" scale="0.0012 0.0012 0.0012"/>
+      </geometry>
+  </collision>
+</link>
+
+<joint name="tool_joint" type="fixed">
+ <origin rpy="1.5707 0 -1.5707" xyz="${base_x_size/2 +1.2} ${base_y_size/2 + 0.3} -0.45"/>
+  <child link="tool_link" />
+  <parent link="chassis_link"/>
+</joint>
+
+<!-- #######################################################################################################-->
+<link name="stabilizer_link">
+  <collision>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="${wheel_vertical_offset} ${wheel_vertical_offset} ${wheel_vertical_offset}"/>
+      </geometry>
+  </collision>
+</link>
+
+<joint name="stabilizer_joint" type="fixed">
+ <origin rpy="0 0 0" xyz="${-(base_x_size/2)} 0 ${-(base_z_size/2 + wheel_vertical_offset/2)}"/>
+  <child link="stabilizer_link" />
+  <parent link="chassis_link"/>
+</joint>
+
+<!-- ======================= gz-sim systems ======================= -->
+
+  <!-- Publish wheel joint states (bridged to ROS /joint_states) -->
+  <gazebo>
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <joint_name>right_wheel_joint</joint_name>
+      <joint_name>left_wheel_joint</joint_name>
+      <joint_name>right_wheel_fake_joint</joint_name>
+      <joint_name>left_wheel_fake_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+  <!-- Differential drive on the collision wheels.
+       The left/right mapping is intentionally crossed, matching
+       the original ROS 1 launch configuration. -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>right_wheel_joint</left_joint>
+      <right_joint>left_wheel_joint</right_joint>
+      <wheel_separation>${base_y_size + wheel_radius/2}</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <odom_publish_frequency>30</odom_publish_frequency>
+      <topic>/cmd_vel</topic>
+      <odom_topic>/odom</odom_topic>
+    </plugin>
+  </gazebo>
+
+  <!-- Differential drive on the visual (fake) wheels -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>right_wheel_fake_joint</left_joint>
+      <right_joint>left_wheel_fake_joint</right_joint>
+      <wheel_separation>${base_y_size + wheel_radius/2}</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <odom_publish_frequency>10</odom_publish_frequency>
+      <topic>/cmd_vel</topic>
+      <odom_topic>/odom_fake</odom_topic>
+    </plugin>
+  </gazebo>
+
+  <!-- ================= tracked vehicle locomotion =================
+       The belt collisions on the track links touch the ground;
+       TrackController gives each belt a moving contact surface
+       (DART feature) and TrackedVehicle converts /cmd_vel into
+       per-track speeds. The DiffDrive plugins above stay purely as
+       wheel-spin animation; the wheels no longer touch the ground. -->
+
+  <gazebo>
+    <plugin filename="gz-sim-track-controller-system" name="gz::sim::systems::TrackController">
+      <link>track_left_wheel_link</link>
+      <min_velocity>-2.0</min_velocity>
+      <max_velocity>2.0</max_velocity>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-track-controller-system" name="gz::sim::systems::TrackController">
+      <link>track_right_wheel_link</link>
+      <min_velocity>-2.0</min_velocity>
+      <max_velocity>2.0</max_velocity>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-tracked-vehicle-system" name="gz::sim::systems::TrackedVehicle">
+      <left_track><link>track_left_wheel_link</link></left_track>
+      <right_track><link>track_right_wheel_link</link></right_track>
+      <tracks_separation>1.66</tracks_separation>
+      <tracks_height>0.92</tracks_height>
+      <steering_efficiency>0.5</steering_efficiency>
+      <topic>/cmd_vel</topic>
+      <odom_topic>/odom_tracked</odom_topic>
+    </plugin>
+  </gazebo>
+
+  <!-- Animated tread plates: joints are generated above, motion is
+       computed by the vl400_track_anim package's TrackVisual system.
+       Each <wheel> is (x, z, r) of a belt circle in the track link
+       frame (radii include the 1 cm belt thickness); the plate path is
+       the convex hull of all circles, so the plates contour around
+       the rear wheel as well. -->
+  <gazebo>
+    <plugin filename="vl400-track-visual-system" name="vl400::systems::TrackVisual">
+      <plate_count>${track_anim_plate_count}</plate_count>
+      <belt_offset>0.03</belt_offset>
+      <wheel>0.555 0.501 0.46</wheel>
+      <wheel>1.005 0.501 0.46</wheel>
+      <wheel>1.755 0.25 0.21</wheel>
+      <track>
+        <link>track_left_wheel_link</link>
+        <prefix>track_anim_left</prefix>
+      </track>
+      <track>
+        <link>track_right_wheel_link</link>
+        <prefix>track_anim_right</prefix>
+      </track>
+    </plugin>
+  </gazebo>
+
+
+</robot>

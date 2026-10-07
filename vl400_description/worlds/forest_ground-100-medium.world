@@ -1,0 +1,498 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.8">
+    <world name="forest_ground-100-medium">
+        <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics" />
+        <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands" />
+        <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster" />
+        <physics name="1ms" type="ignored">
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+        <gravity>0 0 -9.8</gravity>
+        <light name="sun" type="directional">
+            <cast_shadows>true</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>-0.5 0.1 -0.9</direction>
+        </light>
+        <scene>
+            <ambient>0.4 0.4 0.4 1</ambient>
+            <background>0.7 0.8 0.9 1</background>
+        </scene>
+        <light name="ambient" type="directional">
+            <cast_shadows>false</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>0.6 0.6 0.6 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <direction>0.1 0.1 -0.9</direction>
+        </light>
+        <light name="point_light" type="point">
+            <cast_shadows>false</cast_shadows>
+            <pose>0 0 15 0 0 0</pose>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <attenuation>
+                <range>50</range>
+                <constant>0.5</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+        </light>
+        <include>
+            <uri>model://ground-100-medium</uri>
+            <name>terrain</name>
+            <pose>0 0 0 0 0 0</pose>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_0</name>
+            <pose>-42.7780 10.0067 4.5700 0.0106 0.0430 3.7966</pose>
+            <scale>0.991 0.991 0.991</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_1</name>
+            <pose>23.8079 27.2911 2.4738 -0.0466 0.0198 0.3680</pose>
+            <scale>1.335 1.335 1.335</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_2</name>
+            <pose>37.1839 31.4065 1.8206 -0.0047 -0.0422 1.4384</pose>
+            <scale>1.248 1.248 1.248</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_3</name>
+            <pose>-13.8407 -29.3389 2.2329 -0.0102 -0.0213 2.7624</pose>
+            <scale>0.897 0.897 0.897</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_4</name>
+            <pose>-7.3114 -40.9397 3.2514 0.0319 -0.0269 4.5721</pose>
+            <scale>0.864 0.864 0.864</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_5</name>
+            <pose>-19.8313 -35.8485 1.5662 -0.0042 0.0009 6.1815</pose>
+            <scale>1.128 1.128 1.128</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_6</name>
+            <pose>-2.5936 -1.8779 3.6967 0.0072 -0.0191 3.1523</pose>
+            <scale>0.976 0.976 0.976</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_7</name>
+            <pose>-13.7137 8.2410 5.5568 -0.0343 0.0466 0.7894</pose>
+            <scale>0.881 0.881 0.881</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_8</name>
+            <pose>-0.4397 -19.2975 3.2235 0.0254 -0.0454 2.2746</pose>
+            <scale>1.473 1.473 1.473</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_9</name>
+            <pose>-12.9514 16.6231 4.2122 -0.0211 -0.0349 4.4975</pose>
+            <scale>0.922 0.922 0.922</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_10</name>
+            <pose>-23.2946 9.5328 3.5922 -0.0050 -0.0023 0.8888</pose>
+            <scale>0.939 0.939 0.939</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_11</name>
+            <pose>-38.5907 38.8993 3.8424 0.0236 0.0197 2.1093</pose>
+            <scale>1.381 1.381 1.381</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_12</name>
+            <pose>-25.4977 35.9396 2.5457 -0.0461 0.0137 3.7096</pose>
+            <scale>0.848 0.848 0.848</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_13</name>
+            <pose>13.9299 4.4485 3.5730 0.0258 -0.0089 4.0474</pose>
+            <scale>1.311 1.311 1.311</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_14</name>
+            <pose>-16.4406 -6.1505 3.0578 -0.0308 -0.0476 5.7968</pose>
+            <scale>1.075 1.075 1.075</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_15</name>
+            <pose>-3.3429 10.2276 2.2840 0.0169 0.0498 3.2347</pose>
+            <scale>0.998 0.998 0.998</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_16</name>
+            <pose>-25.3967 -11.4766 3.1376 0.0451 -0.0034 1.2769</pose>
+            <scale>1.286 1.286 1.286</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_17</name>
+            <pose>-15.9062 26.8616 2.3060 0.0458 -0.0161 0.7563</pose>
+            <scale>1.342 1.342 1.342</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_18</name>
+            <pose>-13.6760 37.6657 3.2367 -0.0423 0.0476 3.5488</pose>
+            <scale>0.846 0.846 0.846</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_19</name>
+            <pose>2.3384 -44.9645 2.9223 0.0380 0.0194 4.5639</pose>
+            <scale>1.030 1.030 1.030</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_20</name>
+            <pose>-33.0730 -3.4501 3.0778 0.0279 0.0393 3.8892</pose>
+            <scale>0.831 0.831 0.831</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_21</name>
+            <pose>-5.2642 -10.8667 1.9687 -0.0461 0.0200 5.2857</pose>
+            <scale>0.850 0.850 0.850</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_22</name>
+            <pose>12.1208 26.2806 2.9377 0.0496 -0.0024 4.0530</pose>
+            <scale>0.892 0.892 0.892</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_23</name>
+            <pose>23.3416 12.6895 4.5173 -0.0180 -0.0106 3.4120</pose>
+            <scale>0.864 0.864 0.864</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_24</name>
+            <pose>18.8500 -30.9206 4.8873 -0.0367 -0.0085 2.7288</pose>
+            <scale>1.151 1.151 1.151</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_25</name>
+            <pose>39.5501 -43.4726 3.3653 0.0016 -0.0142 2.0943</pose>
+            <scale>1.243 1.243 1.243</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_26</name>
+            <pose>26.5743 -41.1719 4.7203 -0.0050 -0.0287 5.8353</pose>
+            <scale>1.452 1.452 1.452</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_27</name>
+            <pose>40.3079 -3.0662 2.6259 0.0002 0.0383 3.3920</pose>
+            <scale>1.031 1.031 1.031</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_28</name>
+            <pose>6.5579 17.6315 3.2081 -0.0267 0.0067 1.7160</pose>
+            <scale>1.498 1.498 1.498</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_29</name>
+            <pose>-32.3875 23.8835 2.0687 0.0301 0.0225 2.4492</pose>
+            <scale>1.481 1.481 1.481</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_30</name>
+            <pose>46.9891 35.1530 1.3216 -0.0439 0.0051 1.1625</pose>
+            <scale>1.263 1.263 1.263</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_31</name>
+            <pose>8.2786 -36.1128 4.0689 -0.0418 0.0481 2.9919</pose>
+            <scale>1.117 1.117 1.117</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_32</name>
+            <pose>39.7961 44.5367 4.6891 0.0189 -0.0347 3.8227</pose>
+            <scale>1.376 1.376 1.376</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_33</name>
+            <pose>-25.3653 -26.5410 2.9606 0.0362 0.0329 4.1988</pose>
+            <scale>1.334 1.334 1.334</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_34</name>
+            <pose>27.4095 38.9959 4.4793 -0.0092 -0.0064 2.1078</pose>
+            <scale>0.931 0.931 0.931</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_35</name>
+            <pose>-4.6688 -32.4153 3.2959 0.0439 -0.0204 2.6682</pose>
+            <scale>1.066 1.066 1.066</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_36</name>
+            <pose>-32.3133 -18.8561 5.8797 -0.0207 -0.0187 2.9245</pose>
+            <scale>0.862 0.862 0.862</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_37</name>
+            <pose>39.1141 -28.0255 1.9707 -0.0328 0.0456 3.6514</pose>
+            <scale>1.477 1.477 1.477</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_38</name>
+            <pose>25.6833 -12.5995 1.7556 0.0319 0.0279 4.0649</pose>
+            <scale>1.437 1.437 1.437</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_39</name>
+            <pose>36.2228 13.1602 2.3907 -0.0187 -0.0054 4.7786</pose>
+            <scale>1.459 1.459 1.459</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_40</name>
+            <pose>-43.6402 -1.5341 3.7798 -0.0041 0.0047 2.4673</pose>
+            <scale>1.479 1.479 1.479</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_41</name>
+            <pose>31.3635 3.6249 2.8137 0.0141 0.0295 4.9387</pose>
+            <scale>1.091 1.091 1.091</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_42</name>
+            <pose>-4.9526 26.4790 3.5227 -0.0321 -0.0253 1.3771</pose>
+            <scale>1.275 1.275 1.275</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_43</name>
+            <pose>-5.1845 38.1873 2.5676 0.0298 0.0159 5.2051</pose>
+            <scale>1.072 1.072 1.072</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_44</name>
+            <pose>46.1796 21.4529 2.5970 0.0169 -0.0403 2.7721</pose>
+            <scale>1.065 1.065 1.065</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_45</name>
+            <pose>-41.8571 -43.7132 3.3672 0.0284 0.0286 2.0856</pose>
+            <scale>1.493 1.493 1.493</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_46</name>
+            <pose>16.9088 38.2686 3.5821 0.0334 0.0484 0.6249</pose>
+            <scale>0.990 0.990 0.990</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_47</name>
+            <pose>-34.3242 5.6167 3.7727 -0.0177 -0.0324 1.1515</pose>
+            <scale>1.005 1.005 1.005</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_48</name>
+            <pose>28.7850 -23.3236 2.9283 0.0233 -0.0173 0.4208</pose>
+            <scale>0.858 0.858 0.858</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_49</name>
+            <pose>14.8009 -21.0553 2.8807 0.0042 0.0428 3.9370</pose>
+            <scale>1.066 1.066 1.066</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_50</name>
+            <pose>6.8275 -6.8873 3.9792 -0.0422 0.0325 3.3171</pose>
+            <scale>1.213 1.213 1.213</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_51</name>
+            <pose>6.5349 34.8636 3.9701 -0.0352 0.0426 5.4619</pose>
+            <scale>1.201 1.201 1.201</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_52</name>
+            <pose>-36.0141 -31.1560 3.3902 0.0391 0.0443 5.1756</pose>
+            <scale>0.817 0.817 0.817</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_53</name>
+            <pose>-8.5700 2.6889 3.1632 -0.0357 0.0034 4.5453</pose>
+            <scale>0.871 0.871 0.871</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_54</name>
+            <pose>45.7811 5.8402 0.8164 -0.0478 0.0432 2.9569</pose>
+            <scale>1.209 1.209 1.209</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_55</name>
+            <pose>-27.6598 -45.9256 0.8947 -0.0235 0.0142 2.1519</pose>
+            <scale>0.865 0.865 0.865</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_56</name>
+            <pose>44.8649 -17.1830 1.2814 0.0210 0.0281 4.9833</pose>
+            <scale>1.493 1.493 1.493</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_57</name>
+            <pose>-45.6856 -16.9929 4.0931 -0.0451 -0.0045 3.2319</pose>
+            <scale>1.464 1.464 1.464</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_58</name>
+            <pose>-17.1188 -19.7145 2.6670 -0.0386 0.0480 4.7955</pose>
+            <scale>1.050 1.050 1.050</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_59</name>
+            <pose>19.4401 -5.1864 3.2728 0.0392 0.0040 5.2008</pose>
+            <scale>0.981 0.981 0.981</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_60</name>
+            <pose>-24.6921 42.8385 3.6221 -0.0385 0.0203 3.5273</pose>
+            <scale>0.856 0.856 0.856</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_61</name>
+            <pose>-45.5941 -32.0764 5.1695 -0.0303 -0.0144 4.9194</pose>
+            <scale>1.057 1.057 1.057</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_62</name>
+            <pose>-9.8435 -23.2682 2.7422 -0.0476 0.0292 3.0664</pose>
+            <scale>0.872 0.872 0.872</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_63</name>
+            <pose>-44.1810 20.8838 4.4948 -0.0023 -0.0395 6.1418</pose>
+            <scale>1.307 1.307 1.307</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_65</name>
+            <pose>-15.1930 -46.7106 2.8861 0.0113 0.0091 3.4966</pose>
+            <scale>1.444 1.444 1.444</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_66</name>
+            <pose>-26.3829 -2.8627 2.0891 -0.0418 0.0098 5.8490</pose>
+            <scale>0.832 0.832 0.832</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_67</name>
+            <pose>-10.8036 44.8550 3.0413 -0.0446 -0.0291 2.6602</pose>
+            <scale>0.891 0.891 0.891</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_68</name>
+            <pose>14.2602 -44.0879 3.2275 -0.0415 0.0487 1.4478</pose>
+            <scale>0.981 0.981 0.981</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_71</name>
+            <pose>-33.8355 13.4983 4.9039 0.0239 -0.0148 5.2824</pose>
+            <scale>0.903 0.903 0.903</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_73</name>
+            <pose>8.1890 -15.3340 3.5948 -0.0346 -0.0267 1.2952</pose>
+            <scale>0.830 0.830 0.830</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_74</name>
+            <pose>19.9449 45.9270 3.4250 0.0198 -0.0348 6.0106</pose>
+            <scale>0.843 0.843 0.843</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_76</name>
+            <pose>49.0189 -41.6322 1.1145 -0.0323 0.0345 6.1986</pose>
+            <scale>1.085 1.085 1.085</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_80</name>
+            <pose>-19.3401 1.9823 1.4491 0.0378 -0.0280 0.8343</pose>
+            <scale>1.006 1.006 1.006</scale>
+        </include>
+        <include>
+            <uri>model://tree/tree</uri>
+            <name>tree_81</name>
+            <pose>-45.8632 31.6794 4.5812 0.0173 0.0410 5.4698</pose>
+            <scale>1.050 1.050 1.050</scale>
+        </include>
+    </world>
+</sdf>
