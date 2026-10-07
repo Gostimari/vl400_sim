@@ -1,0 +1,80 @@
+<?xml version='1.0'?>
+<sdf version="1.8">
+  <model name="livox_mid360">
+    <static>true</static>
+    <link name="lidar_link">
+      <pose>0.0 0.0 0.5 0.0 0.0 0.0</pose>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.0001</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.0001</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.0001</izz>
+        </inertia>
+      </inertial>
+      <collision name="lidar_collision">
+        <geometry>
+          <box>
+            <size>0.05 0.05 0.05</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="lidar_visual">
+        <geometry>
+          <mesh>
+            <uri>model://livox_laser_simulation/assets/meshes/livox_mid360.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <sensor type="gpu_lidar" name="livox_mid360">
+        <pose>0 0 0.05 0 0 0</pose>
+        <always_on>true</always_on>
+        <update_rate>10</update_rate>
+        <visualize>false</visualize>
+        <topic>/livox/lidar/scan</topic>
+
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>3601</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.141592653589793</min_angle>
+              <max_angle>3.141592653589793</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>595</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.125878381641587</min_angle>
+              <max_angle>0.910433551010322</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>40</max>
+            <resolution>1</resolution>
+          </range>
+        </ray>
+
+        <plugin name="livox_laser_simulation::LivoxLidarSystem" filename="liblivox_laser_simulation.so">
+          <gpu_topic>/livox/lidar/scan</gpu_topic>
+          <csv_file_name>mid360.csv</csv_file_name>
+          <samples>20000</samples>
+          <downsample>1</downsample>
+          <line_count>4</line_count>
+          <point_rate>200000</point_rate>
+          <min_range>0.1</min_range>
+          <max_range>40.0</max_range>
+          <publish_pointcloud_type>2</publish_pointcloud_type>
+          <ros_topic>/livox/lidar</ros_topic>
+          <frame_name>livox_frame</frame_name>
+          <use_inf>false</use_inf>
+        </plugin>
+      </sensor>
+    </link>
+  </model>
+</sdf>

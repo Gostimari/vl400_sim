@@ -1,0 +1,125 @@
+<robot name="sentry" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="gpu" default="true"/>
+    <xacro:property name="gpu" value="$(arg gpu)" />
+    <xacro:arg name="organize_cloud" default="false"/>
+    <xacro:property name="organize_cloud" value="$(arg organize_cloud)" />
+
+    <!-- #######################################################################################################-->
+    <link name="sentry_link">
+      <visual>
+          <origin rpy="0 0 0" xyz="0 0 0"/>
+          <geometry>
+             <mesh filename="package://vl400_description/meshes/Sentry.STL" scale="0.0012 0.0012 0.0012"/>
+          </geometry>
+          <material name="silver">
+            <color rgba="0.75 0.75 0.75 1"/>
+          </material>
+        </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+              <mesh filename="package://vl400_description/meshes/Sentry.STL" scale="0.0012 0.0012 0.0012"/>
+          </geometry>
+      </collision>
+    </link>
+
+    <joint name="sentry_joint" type="fixed">
+     <origin rpy="1.5707 0 0" xyz="${-wheel_radius-0.5} 0.4 ${base_z_size/2}"/>
+      <child link="sentry_link" />
+      <parent link="chassis_link"/>
+    </joint>
+
+    <!--#########   DURO LINK (IMU) #########-->
+      <link name="duro_link">
+        <inertial>
+          <mass value="0.01"/>
+          <origin xyz="0 0 0"/>
+          <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <box size="0.130 0.130 0.06"/>
+          </geometry>
+          <material name="yellow">
+            <color rgba="0.9 0.9 0.0 1"/>
+          </material>
+        </visual>
+      </link>
+
+      <joint name="joint_imu" type="fixed">
+        <origin xyz="0.27 0.40 0.41" rpy="-1.5707 0 0"/>
+        <parent link="sentry_link"/>
+        <child link="duro_link"/>
+      </joint>
+
+      <gazebo reference="sentry_link">
+        <mu1>0.05</mu1>
+        <mu2>0.05</mu2>
+      </gazebo>
+
+      <gazebo reference="duro_link">
+        <sensor name="imu_sensor" type="imu">
+          <always_on>true</always_on>
+          <update_rate>100</update_rate>
+          <topic>/imu</topic>
+          <gz_frame_id>duro_link</gz_frame_id>
+          <imu/>
+        </sensor>
+        <sensor name="mag_sensor" type="magnetometer">
+          <always_on>true</always_on>
+          <update_rate>10</update_rate>
+          <topic>/mag</topic>
+          <gz_frame_id>duro_link</gz_frame_id>
+        </sensor>
+      </gazebo>
+
+    <!--#########  END DURO LINK #########-->
+
+    <!--######### GPS SENSOR #########-->
+      <link name="gps_link">
+        <inertial>
+          <mass value="0.01"/>
+          <origin xyz="0 0 0"/>
+          <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <cylinder radius="0.065" length="0.05"/>
+          </geometry>
+          <material name="yellow">
+            <color rgba="0.9 0.9 0.0 1"/>
+          </material>
+        </visual>
+      </link>
+
+      <joint name="joint_gps" type="fixed">
+        <origin xyz="0 0 0.055" rpy="0 0 0"/>
+        <parent link="duro_link"/>
+        <child link="gps_link"/>
+      </joint>
+
+      <gazebo reference="gps_link">
+        <sensor name="gps_sensor" type="navsat">
+          <always_on>true</always_on>
+          <update_rate>10</update_rate>
+          <topic>/fix</topic>
+          <gz_frame_id>gps_link</gz_frame_id>
+        </sensor>
+      </gazebo>
+    <!--######### END GPS SENSOR #########-->
+
+    <gazebo reference="velodyne_base_link">
+        <mu1>0.05</mu1>
+        <mu2>0.05</mu2>
+    </gazebo>
+
+    <!-- Velodyne VLP-16 (gz-sim gpu_lidar / lidar sensor) -->
+    <xacro:include filename="$(find vl400_description)/urdf/velodyne_vlp16.urdf.xacro"/>
+        <xacro:VLP-16 parent="sentry_link" name="velodyne" topic="/velodyne_points" organize_cloud="${organize_cloud}" hz="10" samples="440" gpu="${gpu}">
+        <origin xyz="0.47 0.42 0.41" rpy="-1.5707 0 0" />
+    </xacro:VLP-16>
+
+</robot>

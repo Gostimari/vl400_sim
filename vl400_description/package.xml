@@ -20,6 +20,16 @@
   <depend>nav_msgs</depend>
   <depend>rosgraph_msgs</depend>
 
+  <!-- Livox lidar simulation plugin (built by this package) -->
+  <depend>rclcpp</depend>
+  <depend>tf2_ros</depend>
+  <depend>ament_index_cpp</depend>
+  <depend>gz_sim_vendor</depend>
+  <depend>gz_math_vendor</depend>
+  <depend>gz_msgs_vendor</depend>
+  <depend>gz_transport_vendor</depend>
+  <depend>gz_plugin_vendor</depend>
+
   <exec_depend>rclpy</exec_depend>
   <exec_depend>xacro</exec_depend>
   <exec_depend>vl400_track_anim</exec_depend>

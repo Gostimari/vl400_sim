@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="livox_hap">
+  <!-- ==================================================================
+       Livox HAP lidar for gz-sim, mounted on the sentry.
+
+       How it works:
+       * The gpu_lidar sensor renders a dense depth image. Its LaserScan
+         on <topic> doubles as a width x height distance image (this is
+         what the plugin resamples), and it also publishes a raw
+         PointCloudPacked on <topic>/points (bridged to the ROS topic
+         /livox_hap_points in config/bridge.yaml).
+       * The livox_laser_simulation plugin attached to the sensor
+         resamples that depth image onto the measured HAP scan pattern
+         (scan_patterns/HAP.csv, installed to share/vl400_description)
+         and publishes a Livox-style PointCloud2 on <ros_topic> plus
+         the TF  world -> <frame_id>.
+       * The plugin library liblivox_laser_simulation.so is built by
+         this package (see CMakeLists.txt) and found through
+         GZ_SIM_SYSTEM_PLUGIN_PATH, which launch/gazebo.launch.py sets.
+       * gz-sim sensors require the sensors system
+         (gz-sim-sensors-system); it is already loaded by the world
+         file, so it must NOT be added again here.
+
+       Mount joint: a revolute joint locked at 0 (limits 0/0). A fixed
+       joint would be lumped into the parent link by the URDF -> SDF
+       conversion and the sensor would lose its mount pose, so the
+       joint stays revolute and never moves.
+
+       The sensor has no <pose> element on purpose: the URDF -> SDF
+       conversion drops it. The link origin (set by the <origin> block
+       at the call site) is the lidar position.
+
+       HAP field of view is 120 x 25 deg (scan pattern azimuth
+       -60.25..60.25 deg, elevation -13.25..13.25 deg). The depth
+       image covers +/-61 x +/-14 deg at 0.2 deg/pixel, which fully
+       covers the scan pattern (the plugin checks this and refuses to
+       publish otherwise).
+       ================================================================== -->
+
+  <xacro:property name="M_PI" value="3.1415926535897931"/>
+
+  <xacro:macro name="livox_hap"
+    params="*origin parent:=base_link
+            name:=livox_hap
+            topic:=/livox_hap
+            ros_topic:=/livox/lidar/pointcloud2
+            frame_id:=livox_hap_frame
+            csv:=HAP.csv
+            hz:=1
+            h_samples:=611
+            v_samples:=141
+            min_angle:=-${61.0*M_PI/180.0}
+            max_angle:=${61.0*M_PI/180.0}
+            v_min_angle:=-${14.0*M_PI/180.0}
+            v_max_angle:=${14.0*M_PI/180.0}
+            min_range:=0.1
+            max_range:=200.0
+            samples:=20000
+            downsample:=1
+            line_count:=4
+            point_rate:=200000
+            cloud_type:=2">
+
+    <link name="${name}_link">
+      <inertial>
+        <mass value="0.4"/>
+        <origin xyz="0 0 0"/>
+        <!-- box 0.10 x 0.06 x 0.06, m = 0.4 -->
+        <inertia ixx="0.00024" ixy="0" ixz="0"
+                 iyy="0.00045" iyz="0" izz="0.00045"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.10 0.06 0.06"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0.05 0.05 0.05 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.10 0.06 0.06"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Locked revolute joint: see the note at the top of this file. -->
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="0" upper="0" effort="1000" velocity="0"/>
+      <dynamics damping="1.0"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor type="gpu_lidar" name="${name}">
+        <always_on>true</always_on>
+        <update_rate>${hz}</update_rate>
+        <visualize>false</visualize>
+        <topic>${topic}</topic>
+        <gz_frame_id>${frame_id}</gz_frame_id>
+        <!-- gz-sim lidar schema. A <ray> block (Gazebo Classic) is
+             silently ignored by gz-sim. -->
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>${h_samples}</samples>
+              <resolution>1</resolution>
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>${v_samples}</samples>
+              <resolution>1</resolution>
+              <min_angle>${v_min_angle}</min_angle>
+              <max_angle>${v_max_angle}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+            <resolution>0.001</resolution>
+          </range>
+        </lidar>
+        <!-- Resamples the depth image above onto the HAP scan pattern
+             and publishes the ROS PointCloud2 + TF. The plugin must sit
+             inside the <sensor>: it attaches to the sensor entity.
+             cloud_type: 1 = PointCloud2 xyz,
+                         2 = PointCloud2 xyz+intensity+tag+line+timestamp
+                             (Livox PointXYZRTLT, the default),
+                         3 = vl400_description/msg/CustomMsg.
+             samples x hz = point_rate = output points per second. -->
+        <plugin filename="liblivox_laser_simulation.so"
+                name="livox_laser_simulation::LivoxLidarSystem">
+          <gpu_topic>${topic}</gpu_topic>
+          <csv_file_name>${csv}</csv_file_name>
+          <samples>${samples}</samples>
+          <downsample>${downsample}</downsample>
+          <line_count>${line_count}</line_count>
+          <point_rate>${point_rate}</point_rate>
+          <min_range>${min_range}</min_range>
+          <max_range>${max_range}</max_range>
+          <publish_pointcloud_type>${cloud_type}</publish_pointcloud_type>
+          <ros_topic>${ros_topic}</ros_topic>
+          <frame_name>${frame_id}</frame_name>
+          <parent_frame_id>world</parent_frame_id>
+          <use_inf>false</use_inf>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+</robot>

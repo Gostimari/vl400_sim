@@ -506,13 +506,17 @@
 
 <!-- ======================= gz-sim systems ======================= -->
 
-  <!-- Publish wheel joint states (bridged to ROS /joint_states) -->
+  <!-- Publish wheel joint states (bridged to ROS /joint_states).
+       The lidar mount joint is listed too so robot_state_publisher
+       publishes the livox_hap_link transform (the lidar cloud itself
+       is anchored on the world frame by the livox plugin). -->
   <gazebo>
     <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
       <joint_name>right_wheel_joint</joint_name>
       <joint_name>left_wheel_joint</joint_name>
       <joint_name>right_wheel_fake_joint</joint_name>
       <joint_name>left_wheel_fake_joint</joint_name>
+      <joint_name>livox_hap_joint</joint_name>
     </plugin>
   </gazebo>
 

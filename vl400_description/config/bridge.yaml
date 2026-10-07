@@ -20,9 +20,11 @@
   direction: GZ_TO_ROS
 
 - ros_topic_name: "joint_states"
-  # gz-sim 10 scopes the JointStatePublisher topic under the world name;
-  # both worlds in this package are named "default"
-  gz_topic_name: "/world/default/model/tractor/joint_state"
+  # gz-sim scopes the JointStatePublisher topic under the world and
+  # model name: /world/<world>/model/<model>/joint_state. The default
+  # launch uses world forest_ground-100-easy and spawns the robot as
+  # model vl400 (change this if you launch a different world).
+  gz_topic_name: "/world/forest_ground-100-easy/model/vl400/joint_state"
   ros_type_name: "sensor_msgs/msg/JointState"
   gz_type_name: "gz.msgs.Model"
   direction: GZ_TO_ROS
@@ -55,4 +57,13 @@
   gz_topic_name: "/velodyne"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+# Raw gz-sim raycast cloud of the Livox HAP sensor (the resampled
+# Livox-pattern cloud is published directly by the livox plugin on
+# /livox/lidar/pointcloud2, no bridge needed for it).
+- ros_topic_name: "livox_hap_points"
+  gz_topic_name: "/livox_hap/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
