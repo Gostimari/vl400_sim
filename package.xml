@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <package format="3">
-  <name>vl400_description</name>
+  <name>vl400_sim</name>
   <version>1.0.0</version>
   <description>Tractor description and Gazebo simulation (ROS 2 port of robot1_description)</description>
   <maintainer email="fra@todo.todo">fra</maintainer>

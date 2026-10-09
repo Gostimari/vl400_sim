@@ -13,7 +13,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory('vl400_description')
+    pkg_share = get_package_share_directory('vl400_sim')
     xacro_file = os.path.join(pkg_share, 'urdf', 'vl400.xacro')
     bridge_file = os.path.join(pkg_share, 'config', 'bridge.yaml')
     default_world = os.path.join(pkg_share, 'worlds', 'forest_ground-100-easy.world')
@@ -31,7 +31,7 @@ def generate_launch_description():
     # lidar simulation plugin (liblivox_laser_simulation.so).
     os.environ['GZ_SIM_SYSTEM_PLUGIN_PATH'] = os.pathsep.join(
         [
-            os.path.join(get_package_prefix('vl400_description'), 'lib'),
+            os.path.join(get_package_prefix('vl400_sim'), 'lib'),
             os.environ.get('GZ_SIM_SYSTEM_PLUGIN_PATH', ''),
         ]
     )
@@ -114,17 +114,17 @@ def generate_launch_description():
 
     # Helper nodes from the original ROS 1 spawn.launch
     fake_state = Node(
-        package='vl400_description',
+        package='vl400_sim',
         executable='fake_state_publisher.py',
         output='screen',
     )
     gps_xy = Node(
-        package='vl400_description',
+        package='vl400_sim',
         executable='pub_GPS_XY_trator.py',
         output='screen',
     )
     magnetometer = Node(
-        package='vl400_description',
+        package='vl400_sim',
         executable='magnetometer_for_simulation.py',
         output='screen',
     )

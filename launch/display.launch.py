@@ -11,7 +11,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory('vl400_description')
+    pkg_share = get_package_share_directory('vl400_sim')
     xacro_file = os.path.join(pkg_share, 'urdf', 'vl400.xacro')
 
     model = LaunchConfiguration('model')

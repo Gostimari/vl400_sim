@@ -11,7 +11,7 @@
          /livox_hap_points in config/bridge.yaml).
        * The livox_laser_simulation plugin attached to the sensor
          resamples that depth image onto the measured HAP scan pattern
-         (scan_patterns/HAP.csv, installed to share/vl400_description)
+         (scan_patterns/HAP.csv, installed to share/vl400_sim)
          and publishes a Livox-style PointCloud2 on <ros_topic> plus
          the TF  sentry_link -> <frame_id>.
        * The plugin library liblivox_laser_simulation.so is built by
@@ -132,7 +132,7 @@
              cloud_type: 1 = PointCloud2 xyz,
                          2 = PointCloud2 xyz+intensity+tag+line+timestamp
                              (Livox PointXYZRTLT, the default),
-                         3 = vl400_description/msg/CustomMsg.
+                         3 = vl400_sim/msg/CustomMsg.
              samples x hz = point_rate = output points per second. -->
         <plugin filename="liblivox_laser_simulation.so"
                 name="livox_laser_simulation::LivoxLidarSystem">

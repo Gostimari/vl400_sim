@@ -25,12 +25,12 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="package://vl400_description/meshes/VLP16_base_1.dae" />
+          <mesh filename="package://vl400_sim/meshes/VLP16_base_1.dae" />
         </geometry>
       </visual>
       <visual>
         <geometry>
-          <mesh filename="package://vl400_description/meshes/VLP16_base_2.dae" />
+          <mesh filename="package://vl400_sim/meshes/VLP16_base_2.dae" />
         </geometry>
       </visual>
       <collision>
@@ -56,7 +56,7 @@
       <visual>
         <origin xyz="0 0 -0.0377" />
         <geometry>
-          <mesh filename="package://vl400_description/meshes/VLP16_scan.dae" />
+          <mesh filename="package://vl400_sim/meshes/VLP16_scan.dae" />
         </geometry>
       </visual>
     </link>

@@ -18,7 +18,7 @@
   <xacro:property name="wheel_radius" value="0.45" />
 
   <!-- ADD SENTRY and sensors xacro -->
-  <xacro:include filename="$(find vl400_description)/urdf/sentry.xacro"/>
+  <xacro:include filename="$(find vl400_sim)/urdf/sentry.xacro"/>
 
   <!--  INERTIA COMPUTATION-->
     <!--cylinder-->
@@ -103,7 +103,7 @@
    <visual>
     <origin rpy="0 0 -1.5707" xyz="0 0 0"/>
     <geometry>
-      <mesh filename="package://vl400_description/meshes/wheel_v2.stl" scale="0.0013 0.0015 0.0015"/>
+      <mesh filename="package://vl400_sim/meshes/wheel_v2.stl" scale="0.0013 0.0015 0.0015"/>
     </geometry>
     <material name="black">
       <color rgba="0.05 0.05 0.05 1"/>
@@ -142,7 +142,7 @@
    <visual>
     <origin rpy="0 0 1.5707" xyz="0 0 0"/>
     <geometry>
-      <mesh filename="package://vl400_description/meshes/wheel_v2.stl" scale="0.0013 0.0015 0.0015"/>
+      <mesh filename="package://vl400_sim/meshes/wheel_v2.stl" scale="0.0013 0.0015 0.0015"/>
     </geometry>
     <material name="black">
       <color rgba="0.05 0.05 0.05 1"/>
@@ -221,7 +221,7 @@
   <visual>
     <origin rpy="0 0 0" xyz="0 ${y_off} 0"/>
     <geometry>
-      <mesh filename="package://vl400_description/meshes/belt_band.dae"/>
+      <mesh filename="package://vl400_sim/meshes/belt_band.dae"/>
     </geometry>
     <material name="tread">
       <color rgba="0.05 0.05 0.05 1"/>
@@ -431,7 +431,7 @@
   <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-         <mesh filename="package://vl400_description/meshes/Hood.STL" scale="0.002 0.0015 0.0015"/>
+         <mesh filename="package://vl400_sim/meshes/Hood.STL" scale="0.002 0.0015 0.0015"/>
       </geometry>
       <material name="green">
         <color rgba="0.0 0.7 0.0 1"/>
@@ -450,7 +450,7 @@
   <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-         <mesh filename="package://vl400_description/meshes/Tubular.STL" scale="0.0023 0.001 0.003"/>
+         <mesh filename="package://vl400_sim/meshes/Tubular.STL" scale="0.0023 0.001 0.003"/>
       </geometry>
       <material name="orange">
         <color rgba="0.8 0.5 0.0 1"/>
@@ -468,7 +468,7 @@
   <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-         <mesh filename="package://vl400_description/meshes/Mulcher_v2.STL" scale="0.0012 0.0012 0.0012"/>
+         <mesh filename="package://vl400_sim/meshes/Mulcher_v2.STL" scale="0.0012 0.0012 0.0012"/>
       </geometry>
       <material name="green">
         <color rgba="0.0 0.7 0.0 1"/>
@@ -477,7 +477,7 @@
   <collision>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <geometry>
-        <mesh filename="package://vl400_description/meshes/Mulcher_v2.STL" scale="0.0012 0.0012 0.0012"/>
+        <mesh filename="package://vl400_sim/meshes/Mulcher_v2.STL" scale="0.0012 0.0012 0.0012"/>
       </geometry>
   </collision>
 </link>

@@ -5,12 +5,12 @@
     <xacro:arg name="organize_cloud" default="false"/>
     <xacro:property name="organize_cloud" value="$(arg organize_cloud)" />
 
-    <!-- #######################################################################################################-->
+    <!-- ######### SENTRY link ######### -->
     <link name="sentry_link">
       <visual>
           <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
-             <mesh filename="package://vl400_description/meshes/Sentry.STL" scale="0.0012 0.0012 0.0012"/>
+             <mesh filename="package://vl400_sim/meshes/Sentry.STL" scale="0.0012 0.0012 0.0012"/>
           </geometry>
           <material name="silver">
             <color rgba="0.75 0.75 0.75 1"/>
@@ -19,19 +19,24 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-              <mesh filename="package://vl400_description/meshes/Sentry.STL" scale="0.0012 0.0012 0.0012"/>
+              <mesh filename="package://vl400_sim/meshes/Sentry.STL" scale="0.0012 0.0012 0.0012"/>
           </geometry>
       </collision>
     </link>
 
     <joint name="sentry_joint" type="fixed">
      <origin rpy="1.5707 0 0" xyz="${-wheel_radius-0.5} 0.4 ${base_z_size/2}"/>
-      <child link="sentry_link" />
-      <parent link="chassis_link"/>
+     <parent link="chassis_link"/>
+     <child link="sentry_link"/>
     </joint>
 
+    <gazebo reference="sentry_link">
+      <mu1>0.05</mu1>
+      <mu2>0.05</mu2>
+    </gazebo>
+
     <!--#########   DURO LINK (IMU) #########-->
-      <link name="duro_link">
+      <link name="imu_link">
         <inertial>
           <mass value="0.01"/>
           <origin xyz="0 0 0"/>
@@ -51,31 +56,24 @@
       <joint name="joint_imu" type="fixed">
         <origin xyz="0.27 0.40 0.41" rpy="-1.5707 0 0"/>
         <parent link="sentry_link"/>
-        <child link="duro_link"/>
+        <child link="imu_link"/>
       </joint>
 
-      <gazebo reference="sentry_link">
-        <mu1>0.05</mu1>
-        <mu2>0.05</mu2>
-      </gazebo>
-
-      <gazebo reference="duro_link">
+      <gazebo reference="imu_link">
         <sensor name="imu_sensor" type="imu">
           <always_on>true</always_on>
           <update_rate>100</update_rate>
           <topic>/imu</topic>
-          <gz_frame_id>duro_link</gz_frame_id>
+          <gz_frame_id>imu_link</gz_frame_id>
           <imu/>
         </sensor>
         <sensor name="mag_sensor" type="magnetometer">
           <always_on>true</always_on>
           <update_rate>10</update_rate>
           <topic>/mag</topic>
-          <gz_frame_id>duro_link</gz_frame_id>
+          <gz_frame_id>imu_link</gz_frame_id>
         </sensor>
       </gazebo>
-
-    <!--#########  END DURO LINK #########-->
 
     <!--######### GPS SENSOR #########-->
       <link name="gps_link">
@@ -97,7 +95,7 @@
 
       <joint name="joint_gps" type="fixed">
         <origin xyz="0 0 0.055" rpy="0 0 0"/>
-        <parent link="duro_link"/>
+        <parent link="sentry_link"/>
         <child link="gps_link"/>
       </joint>
 
@@ -109,17 +107,42 @@
           <gz_frame_id>gps_link</gz_frame_id>
         </sensor>
       </gazebo>
-    <!--######### END GPS SENSOR #########-->
 
+    <!-- gz-sim's Sensors system only CREATES the non-rendering sensors
+         above (imu, magnetometer, navsat); their data is published by
+         dedicated systems. Without these three plugins the gz topics
+         /imu, /mag and /fix receive no messages and the ROS bridge
+         forwards nothing. They are model-level plugins so they work
+         in every world the robot is spawned into. -->
+    <gazebo>
+      <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    </gazebo>
+    <gazebo>
+      <plugin filename="gz-sim-magnetometer-system" name="gz::sim::systems::Magnetometer"/>
+    </gazebo>
+    <gazebo>
+      <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
+    </gazebo>
+
+    <!--######### LiDAR Sensors (Velodyni, livox HAP) #########-->
     <gazebo reference="velodyne_base_link">
         <mu1>0.05</mu1>
         <mu2>0.05</mu2>
     </gazebo>
 
     <!-- Velodyne VLP-16 (gz-sim gpu_lidar / lidar sensor) -->
-    <xacro:include filename="$(find vl400_description)/urdf/velodyne_vlp16.urdf.xacro"/>
+    <!-- <xacro:include filename="$(find vl400_sim)/urdf/velodyne_vlp16.urdf.xacro"/>
         <xacro:VLP-16 parent="sentry_link" name="velodyne" topic="/velodyne_points" organize_cloud="${organize_cloud}" hz="10" samples="440" gpu="${gpu}">
         <origin xyz="0.47 0.42 0.41" rpy="-1.5707 0 0" />
-    </xacro:VLP-16>
+    </xacro:VLP-16> -->
+
+    <!-- Livox HAP (gz-sim gpu_lidar + livox_laser_simulation plugin,
+         see urdf/livox_hap.xacro). Publishes the resampled Livox
+         cloud on /livox/lidar/pointcloud2 in frame livox_hap_frame,
+         with TF world -> livox_hap_frame. -->
+    <xacro:include filename="$(find vl400_sim)/urdf/livox_hap.xacro"/>
+    <xacro:livox_hap parent="sentry_link" name="livox_hap" topic="/livox_hap" ros_topic="/livox/lidar/pointcloud2" frame_id="livox_hap_frame">
+      <origin xyz="0.47 0.30 0.41" rpy="-1.5707 0 0"/>
+    </xacro:livox_hap>
 
 </robot>

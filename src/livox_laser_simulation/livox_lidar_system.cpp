@@ -99,7 +99,7 @@ void LivoxLidarSystem::Configure(const gz::sim::Entity &_entity,
   if (!csv_file_name_.empty() && !std::filesystem::path(csv_file_name_).is_absolute())
   {
     csv_file_name_ = (std::filesystem::path(
-      ament_index_cpp::get_package_share_directory("vl400_description")) /
+      ament_index_cpp::get_package_share_directory("vl400_sim")) /
       "scan_patterns" / csv_file_name_).string();
   }
   if (csv_file_name_.empty() || !std::filesystem::exists(csv_file_name_))

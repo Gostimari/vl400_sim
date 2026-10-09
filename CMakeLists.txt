@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(vl400_description)
+project(vl400_sim)
 
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
@@ -38,22 +38,22 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
 
-add_library(vl400_description_plugin SHARED
+add_library(vl400_sim_plugin SHARED
   src/livox_laser_simulation/livox_lidar_system.cpp
   src/livox_laser_simulation/livox_depth_sampler.cpp
 )
 # Installed as liblivox_laser_simulation.so, the library name referenced
 # by the <plugin filename="liblivox_laser_simulation.so"> block of the
 # livox_hap.xacro sensor.
-set_target_properties(vl400_description_plugin PROPERTIES
+set_target_properties(vl400_sim_plugin PROPERTIES
   OUTPUT_NAME livox_laser_simulation)
-target_include_directories(vl400_description_plugin PRIVATE
+target_include_directories(vl400_sim_plugin PRIVATE
   include
   ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp
 )
 rosidl_get_typesupport_target(cpp_typesupport_target
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
-target_link_libraries(vl400_description_plugin
+target_link_libraries(vl400_sim_plugin
   "${cpp_typesupport_target}"
   rclcpp::rclcpp
   sensor_msgs::sensor_msgs
@@ -67,7 +67,7 @@ target_link_libraries(vl400_description_plugin
   gz-plugin::gz-plugin-register
 )
 
-install(TARGETS vl400_description_plugin
+install(TARGETS vl400_sim_plugin
   LIBRARY DESTINATION lib
 )
 
