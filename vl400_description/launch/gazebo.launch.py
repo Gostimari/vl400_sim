@@ -26,12 +26,11 @@ def generate_launch_description():
         [share_root, models_dir, os.environ.get('GZ_SIM_RESOURCE_PATH', '')]
     )
 
-    # Custom gz-sim systems: vl400_track_anim's TrackVisual and the
-    # Livox lidar simulation plugin (liblivox_laser_simulation.so)
-    # built by this package.
+    # Custom gz-sim systems built by this package: the TrackVisual tread
+    # plate animation (libvl400-track-visual-system.so) and the Livox
+    # lidar simulation plugin (liblivox_laser_simulation.so).
     os.environ['GZ_SIM_SYSTEM_PLUGIN_PATH'] = os.pathsep.join(
         [
-            os.path.join(get_package_prefix('vl400_track_anim'), 'lib'),
             os.path.join(get_package_prefix('vl400_description'), 'lib'),
             os.environ.get('GZ_SIM_SYSTEM_PLUGIN_PATH', ''),
         ]

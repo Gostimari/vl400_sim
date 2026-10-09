@@ -361,8 +361,8 @@
 <!-- ================================================================= -->
 <!-- Animated tread plates (visual only). Each plate hangs on a polar -->
 <!-- 2-DOF chain: track link > revolute(y) > arm > prismatic(x) >      -->
-<!-- plate. The vl400_track_anim TrackVisual system drives the joints  -->
-<!-- along the belt loop (convex hull of the two belt circles).        -->
+<!-- plate. The TrackVisual system built by this package drives the    -->
+<!-- joints along the belt loop (convex hull of the two belt circles). -->
 <!-- ================================================================= -->
 <xacro:property name="track_anim_plate_count" value="24" />
 <!-- Loop center (x z) in the track link frame: centroid of the three
@@ -584,7 +584,7 @@
   </gazebo>
 
   <!-- Animated tread plates: joints are generated above, motion is
-       computed by the vl400_track_anim package's TrackVisual system.
+       computed by this package's TrackVisual system.
        Each <wheel> is (x, z, r) of a belt circle in the track link
        frame (radii include the 1 cm belt thickness); the plate path is
        the convex hull of all circles, so the plates contour around

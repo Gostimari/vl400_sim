@@ -71,6 +71,22 @@ install(TARGETS vl400_description_plugin
   LIBRARY DESTINATION lib
 )
 
+# Tread plate animation system (fused in from the former
+# vl400_track_anim package). Installed as libvl400-track-visual-system.so,
+# the library name referenced by the
+# <plugin filename="vl400-track-visual-system"> block of urdf/vl400.xacro.
+add_library(vl400-track-visual-system SHARED src/track_visual/TrackVisual.cc)
+target_compile_features(vl400-track-visual-system PUBLIC cxx_std_17)
+target_link_libraries(vl400-track-visual-system
+  PRIVATE
+    gz-sim::core
+    gz-plugin::gz-plugin-register
+)
+
+install(TARGETS vl400-track-visual-system
+  LIBRARY DESTINATION lib
+)
+
 install(DIRECTORY
   launch
   worlds
