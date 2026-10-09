@@ -10,7 +10,6 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <tf2_ros/transform_broadcaster.h>
 
 #include <chrono>
 #include <memory>
@@ -61,15 +60,8 @@ private:
                           const rclcpp::Time &_stamp, bool _livox_fields);
   void PublishLivoxCustomMsg(const std::vector<LivoxRayResult> &_results,
                              const rclcpp::Time &_stamp);
-  void BroadcastTF(const rclcpp::Time &_stamp,
-                   const gz::math::Pose3d &_sensor_pose);
 
-  gz::sim::Entity sensor_entity_{gz::sim::kNullEntity};
   std::string sensor_name_;
-  gz::math::Pose3d sensor_pose_;
-  // Parent frame of the broadcast TF. Defaults to the gz-sim world
-  // frame so the cloud resolves in RViz with fixed frame "world".
-  std::string parent_frame_id_{"world"};
 
   std::unique_ptr<LivoxDepthSampler> depth_sampler_;
   std::string csv_file_name_;
@@ -97,7 +89,6 @@ private:
   rclcpp::Node::SharedPtr ros_node_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
   rclcpp::Publisher<livox_laser_simulation::msg::CustomMsg>::SharedPtr custom_msg_pub_;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   std::mutex mutex_;
   // Destroy the subscriber before state used by its callback.
   gz::transport::Node transport_node_;

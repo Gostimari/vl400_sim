@@ -2,13 +2,11 @@
 
 #include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
-#include <gz/sim/Util.hh>
 #include <gz/sim/components/Name.hh>
 #include <gz/sim/components/ParentEntity.hh>
 #include <gz/sim/components/Sensor.hh>
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
-#include <geometry_msgs/msg/transform_stamped.hpp>
 #include <sensor_msgs/msg/point_field.hpp>
 
 #include <algorithm>
@@ -61,15 +59,12 @@ void LivoxLidarSystem::Configure(const gz::sim::Entity &_entity,
     return;
   }
 
-  sensor_entity_ = _entity;
   sensor_name_ = name_component->Data();
 
   csv_file_name_ = SdfValue<std::string>(_sdf, "csv_file_name", "");
   gpu_topic_ = SdfValue<std::string>(_sdf, "gpu_topic", gpu_topic_);
   ros_topic_ = SdfValue<std::string>(_sdf, "ros_topic", ros_topic_);
   frame_name_ = SdfValue<std::string>(_sdf, "frame_name", sensor_name_);
-  parent_frame_id_ = SdfValue<std::string>(
-    _sdf, "parent_frame_id", parent_frame_id_);
   sample_step_ = std::max(1, SdfValue<int>(_sdf, "samples", sample_step_));
   downsample_ = std::max(1, SdfValue<int>(_sdf, "downsample", downsample_));
   line_count_ = SdfValue<int>(_sdf, "line_count", line_count_);
@@ -156,7 +151,6 @@ void LivoxLidarSystem::InitializeROS()
     pointcloud_pub_ =
       ros_node_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_topic_, 5);
   }
-  tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(ros_node_);
 }
 
 void LivoxLidarSystem::PostUpdate(const gz::sim::UpdateInfo &_info,
@@ -166,7 +160,6 @@ void LivoxLidarSystem::PostUpdate(const gz::sim::UpdateInfo &_info,
     return;
 
   std::lock_guard<std::mutex> lock(mutex_);
-  sensor_pose_ = gz::sim::worldPose(sensor_entity_, _ecm);
   sim_time_ = _info.simTime;
 }
 
@@ -206,7 +199,6 @@ void LivoxLidarSystem::OnGpuScan(const gz::msgs::LaserScan &_scan)
   if (startup_scans_seen_++ < startup_skip_scans_)
     return;
 
-  gz::math::Pose3d sensor_pose;
   std::chrono::steady_clock::duration sim_time;
   size_t start_index;
   {
@@ -214,7 +206,6 @@ void LivoxLidarSystem::OnGpuScan(const gz::msgs::LaserScan &_scan)
     if (!configured_)
       return;
 
-    sensor_pose = sensor_pose_;
     sim_time = sim_time_;
     start_index = curr_start_index_;
     curr_start_index_ = (start_index + static_cast<size_t>(sample_step_)) %
@@ -234,7 +225,6 @@ void LivoxLidarSystem::OnGpuScan(const gz::msgs::LaserScan &_scan)
       std::chrono::duration_cast<std::chrono::nanoseconds>(sim_time).count();
   }
   const rclcpp::Time stamp(nanoseconds, RCL_ROS_TIME);
-  BroadcastTF(stamp, sensor_pose);
   PublishPointCloud(results, stamp);
   rclcpp::spin_some(ros_node_);
 }
@@ -332,28 +322,6 @@ void LivoxLidarSystem::PublishLivoxCustomMsg(
   }
   cloud.point_num = static_cast<uint32_t>(cloud.points.size());
   custom_msg_pub_->publish(std::move(cloud));
-}
-
-void LivoxLidarSystem::BroadcastTF(
-  const rclcpp::Time &_stamp, const gz::math::Pose3d &_sensor_pose)
-{
-  // Broadcast parent_frame_id (default: the gz-sim world frame) ->
-  // frame_name using the sensor's world pose. Anchoring the cloud
-  // frame directly on the world keeps the TF chain self-contained,
-  // so RViz resolves it with fixed frame "world" without depending
-  // on the robot_state_publisher joint-state chain.
-  geometry_msgs::msg::TransformStamped transform;
-  transform.header.stamp = _stamp;
-  transform.header.frame_id = parent_frame_id_;
-  transform.child_frame_id = frame_name_;
-  transform.transform.translation.x = _sensor_pose.Pos().X();
-  transform.transform.translation.y = _sensor_pose.Pos().Y();
-  transform.transform.translation.z = _sensor_pose.Pos().Z();
-  transform.transform.rotation.x = _sensor_pose.Rot().X();
-  transform.transform.rotation.y = _sensor_pose.Rot().Y();
-  transform.transform.rotation.z = _sensor_pose.Rot().Z();
-  transform.transform.rotation.w = _sensor_pose.Rot().W();
-  tf_broadcaster_->sendTransform(transform);
 }
 
 }  // namespace livox_laser_simulation

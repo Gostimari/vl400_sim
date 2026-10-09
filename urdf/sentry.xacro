@@ -146,7 +146,7 @@
 
     <!-- Livox HAP -->
     <xacro:include filename="$(find vl400_sim)/urdf/livox_hap.xacro"/>
-    <xacro:livox_hap parent="sentry_link" name="livox_hap" topic="/livox_hap" ros_topic="/livox/lidar/pointcloud2" frame_id="livox_hap_frame">
+    <xacro:livox_hap parent="sentry_link" name="livox_hap" topic="/livox_hap" ros_topic="/livox/lidar/pointcloud2" frame_id="livox_hap_link">
       <origin xyz="0.47 0.30 0.41" rpy="-1.5707 0 0"/>
     </xacro:livox_hap>
 

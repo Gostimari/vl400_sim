@@ -12,8 +12,12 @@
        * The livox_laser_simulation plugin attached to the sensor
          resamples that depth image onto the measured HAP scan pattern
          (scan_patterns/HAP.csv, installed to share/vl400_sim)
-         and publishes a Livox-style PointCloud2 on <ros_topic> plus
-         the TF  sentry_link -> <frame_id>.
+         and publishes a Livox-style PointCloud2 on <ros_topic> with
+         header.frame_id = <frame_id>. TF is NOT published by the
+         plugin: robot_state_publisher already broadcasts
+         ${parent} -> ${name}_link from the mount joint above, and
+         <frame_id> is the link frame, so the cloud is placed by the
+         URDF-exact transform (fixed frame in RViz: base_link).
        * The plugin library liblivox_laser_simulation.so is built by
          this package (see CMakeLists.txt) and found through
          GZ_SIM_SYSTEM_PLUGIN_PATH, which launch/gazebo.launch.py sets.
@@ -127,7 +131,7 @@
           </range>
         </lidar>
         <!-- Resamples the depth image above onto the HAP scan pattern
-             and publishes the ROS PointCloud2 + TF. The plugin must sit
+             and publishes the ROS PointCloud2 (no TF). The plugin must sit
              inside the <sensor>: it attaches to the sensor entity.
              cloud_type: 1 = PointCloud2 xyz,
                          2 = PointCloud2 xyz+intensity+tag+line+timestamp
@@ -147,7 +151,6 @@
           <publish_pointcloud_type>${cloud_type}</publish_pointcloud_type>
           <ros_topic>${ros_topic}</ros_topic>
           <frame_name>${frame_id}</frame_name>
-          <parent_frame_id>sentry_link</parent_frame_id>
           <use_inf>false</use_inf>
         </plugin>
       </sensor>
