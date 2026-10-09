@@ -422,6 +422,16 @@
   </xacro:if>
 </xacro:macro>
 
+<!-- Emit <joint_name> elements for one track's plate joints. Used in the
+     JointStatePublisher whitelist below so the tread plates get TF. -->
+<xacro:macro name="track_joint_names" params="prefix n">
+  <xacro:if value="${n > 0}">
+    <joint_name>${prefix}_arm_j_${n - 1}</joint_name>
+    <joint_name>${prefix}_slide_j_${n - 1}</joint_name>
+    <xacro:track_joint_names prefix="${prefix}" n="${n - 1}"/>
+  </xacro:if>
+</xacro:macro>
+
 <xacro:track_plates side="left" y_off="0.13" prefix="track_anim_left" n="${track_anim_plate_count}"/>
 <xacro:track_plates side="right" y_off="0.15" prefix="track_anim_right" n="${track_anim_plate_count}"/>
 
@@ -509,7 +519,13 @@
   <!-- Publish wheel joint states (bridged to ROS /joint_states).
        The lidar mount joint is listed too so robot_state_publisher
        publishes the livox_hap_link transform (the lidar cloud itself
-       is anchored on the world frame by the livox plugin). -->
+       is anchored on the world frame by the livox plugin).
+       The track assembly joints and all tread plate joints are listed
+       as well: robot_state_publisher only publishes TF for joints it
+       receives states for, so without these the track links and plates
+       have no transform and RViz cannot display them. The plate states
+       are the live TrackVisual animation, so RViz shows the treads
+       circulating around the loop. -->
   <gazebo>
     <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
       <joint_name>right_wheel_joint</joint_name>
@@ -517,6 +533,10 @@
       <joint_name>right_wheel_fake_joint</joint_name>
       <joint_name>left_wheel_fake_joint</joint_name>
       <joint_name>livox_hap_joint</joint_name>
+      <joint_name>track_left_wheel_joint</joint_name>
+      <joint_name>track_right_wheel_joint</joint_name>
+      <xacro:track_joint_names prefix="track_anim_left" n="${track_anim_plate_count}"/>
+      <xacro:track_joint_names prefix="track_anim_right" n="${track_anim_plate_count}"/>
     </plugin>
   </gazebo>
 

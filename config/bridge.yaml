@@ -53,11 +53,11 @@
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "velodyne_scan"
-  gz_topic_name: "/velodyne"
-  ros_type_name: "sensor_msgs/msg/LaserScan"
-  gz_type_name: "gz.msgs.LaserScan"
-  direction: GZ_TO_ROS
+# - ros_topic_name: "velodyne_scan"
+#   gz_topic_name: "/velodyne"
+#   ros_type_name: "sensor_msgs/msg/LaserScan"
+#   gz_type_name: "gz.msgs.LaserScan"
+#   direction: GZ_TO_ROS
 
 # Raw gz-sim raycast cloud of the Livox HAP sensor (the resampled
 # Livox-pattern cloud is published directly by the livox plugin on

@@ -65,14 +65,34 @@
           <update_rate>100</update_rate>
           <topic>/imu</topic>
           <gz_frame_id>imu_link</gz_frame_id>
-          <imu/>
+          <imu>
+            <angular_velocity>
+              <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></x>
+              <y><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></y>
+              <z><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></z>
+            </angular_velocity>
+            <linear_acceleration>
+              <x><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></x>
+              <y><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></y>
+              <z><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></z>
+            </linear_acceleration>
+          </imu>
         </sensor>
+
         <sensor name="mag_sensor" type="magnetometer">
           <always_on>true</always_on>
           <update_rate>10</update_rate>
           <topic>/mag</topic>
           <gz_frame_id>imu_link</gz_frame_id>
         </sensor>
+      </gazebo>
+
+      <gazebo>
+        <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+      </gazebo>
+
+      <gazebo>
+        <plugin filename="gz-sim-magnetometer-system" name="gz::sim::systems::Magnetometer"/>
       </gazebo>
 
     <!--######### GPS SENSOR #########-->
@@ -95,34 +115,22 @@
 
       <joint name="joint_gps" type="fixed">
         <origin xyz="0 0 0.055" rpy="0 0 0"/>
-        <parent link="sentry_link"/>
+        <parent link="imu_link"/>
         <child link="gps_link"/>
       </joint>
 
-      <gazebo reference="gps_link">
-        <sensor name="gps_sensor" type="navsat">
-          <always_on>true</always_on>
-          <update_rate>10</update_rate>
-          <topic>/fix</topic>
-          <gz_frame_id>gps_link</gz_frame_id>
-        </sensor>
-      </gazebo>
+        <gazebo reference="gps_link">
+            <sensor name="gps_sensor" type="navsat">
+                <always_on>true</always_on>
+                <update_rate>10</update_rate>
+                <topic>/fix</topic>
+                <gz_frame_id>gps_link</gz_frame_id>
+            </sensor>
+        </gazebo>
 
-    <!-- gz-sim's Sensors system only CREATES the non-rendering sensors
-         above (imu, magnetometer, navsat); their data is published by
-         dedicated systems. Without these three plugins the gz topics
-         /imu, /mag and /fix receive no messages and the ROS bridge
-         forwards nothing. They are model-level plugins so they work
-         in every world the robot is spawned into. -->
-    <gazebo>
-      <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
-    </gazebo>
-    <gazebo>
-      <plugin filename="gz-sim-magnetometer-system" name="gz::sim::systems::Magnetometer"/>
-    </gazebo>
-    <gazebo>
-      <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
-    </gazebo>
+        <gazebo>
+            <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
+        </gazebo>
 
     <!--######### LiDAR Sensors (Velodyni, livox HAP) #########-->
     <gazebo reference="velodyne_base_link">
@@ -130,16 +138,13 @@
         <mu2>0.05</mu2>
     </gazebo>
 
-    <!-- Velodyne VLP-16 (gz-sim gpu_lidar / lidar sensor) -->
+    <!-- Velodyne VLP-16 -->
     <!-- <xacro:include filename="$(find vl400_sim)/urdf/velodyne_vlp16.urdf.xacro"/>
         <xacro:VLP-16 parent="sentry_link" name="velodyne" topic="/velodyne_points" organize_cloud="${organize_cloud}" hz="10" samples="440" gpu="${gpu}">
         <origin xyz="0.47 0.42 0.41" rpy="-1.5707 0 0" />
     </xacro:VLP-16> -->
 
-    <!-- Livox HAP (gz-sim gpu_lidar + livox_laser_simulation plugin,
-         see urdf/livox_hap.xacro). Publishes the resampled Livox
-         cloud on /livox/lidar/pointcloud2 in frame livox_hap_frame,
-         with TF world -> livox_hap_frame. -->
+    <!-- Livox HAP -->
     <xacro:include filename="$(find vl400_sim)/urdf/livox_hap.xacro"/>
     <xacro:livox_hap parent="sentry_link" name="livox_hap" topic="/livox_hap" ros_topic="/livox/lidar/pointcloud2" frame_id="livox_hap_frame">
       <origin xyz="0.47 0.30 0.41" rpy="-1.5707 0 0"/>
