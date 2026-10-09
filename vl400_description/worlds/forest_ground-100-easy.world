@@ -14,6 +14,23 @@
             <real_time_factor>1.0</real_time_factor>
         </physics>
         <gravity>0 0 -9.8</gravity>
+        <!-- Reference for the navsat (GPS) sensor: lat/lon/alt of the
+             world origin. The world frame is ENU (+x east, +y north),
+             so the robot's world position maps to small local offsets.
+             49.9 / 8.9 matches ORIGIN_LAT / ORIGIN_LON in
+             scripts/pub_GPS_XY_trator.py, which converts /fix into
+             local XY metres. Without this block the fix would report
+             lat/lon near 0/0. -->
+        <spherical_coordinates>
+            <surface_model>EARTH_WGS84</surface_model>
+            <latitude_deg>49.9</latitude_deg>
+            <longitude_deg>8.9</longitude_deg>
+            <elevation>0</elevation>
+            <heading_deg>0</heading_deg>
+        </spherical_coordinates>
+        <!-- Earth-like magnetic field in Tesla (sdformat default) for
+             the magnetometer: mostly horizontal, pointing ~north. -->
+        <magnetic_field>5.5645e-6 22.8758e-6 -42.3884e-6</magnetic_field>
         <light name="sun" type="directional">
             <cast_shadows>true</cast_shadows>
             <pose>0 0 10 0 0 0</pose>

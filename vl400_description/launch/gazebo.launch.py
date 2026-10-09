@@ -142,7 +142,7 @@ def generate_launch_description():
         gz_sim,
         spawn,
         bridge,
-        fake_state,
-        gps_xy,
+        #fake_state,
+        #gps_xy,
         magnetometer,
     ])

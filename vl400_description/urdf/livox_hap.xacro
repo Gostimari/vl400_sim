@@ -13,7 +13,7 @@
          resamples that depth image onto the measured HAP scan pattern
          (scan_patterns/HAP.csv, installed to share/vl400_description)
          and publishes a Livox-style PointCloud2 on <ros_topic> plus
-         the TF  world -> <frame_id>.
+         the TF  sentry_link -> <frame_id>.
        * The plugin library liblivox_laser_simulation.so is built by
          this package (see CMakeLists.txt) and found through
          GZ_SIM_SYSTEM_PLUGIN_PATH, which launch/gazebo.launch.py sets.
@@ -44,9 +44,9 @@
             name:=livox_hap
             topic:=/livox_hap
             ros_topic:=/livox/lidar/pointcloud2
-            frame_id:=livox_hap_frame
+            frame_id:=livox_hap_link
             csv:=HAP.csv
-            hz:=1
+            hz:=10
             h_samples:=611
             v_samples:=141
             min_angle:=-${61.0*M_PI/180.0}
@@ -147,7 +147,7 @@
           <publish_pointcloud_type>${cloud_type}</publish_pointcloud_type>
           <ros_topic>${ros_topic}</ros_topic>
           <frame_name>${frame_id}</frame_name>
-          <parent_frame_id>world</parent_frame_id>
+          <parent_frame_id>sentry_link</parent_frame_id>
           <use_inf>false</use_inf>
         </plugin>
       </sensor>
