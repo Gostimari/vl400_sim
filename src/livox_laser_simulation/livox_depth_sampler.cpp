@@ -155,32 +155,68 @@ std::vector<LivoxRayResult> LivoxDepthSampler::SampleDepthImage(
     const double vertical_ratio =
       (scan.elevation - vertical_angle_min_) /
       (vertical_angle_max_ - vertical_angle_min_);
-    const auto column = static_cast<unsigned int>(std::llround(
-      horizontal_ratio * static_cast<double>(_width - 1)));
-    const auto row = static_cast<unsigned int>(std::llround(
-      vertical_ratio * static_cast<double>(_height - 1)));
-    const size_t pixel = static_cast<size_t>(row) * _width + column;
+    // Bilinear range lookup at the exact pattern direction. The depth
+    // image is a coarse range grid (0.5 deg/pixel); interpolating keeps
+    // the range error comparable to a nearest-pixel lookup on a fine
+    // grid. Non-finite or out-of-range corners (misses) are dropped and
+    // the weights renormalized, so depth edges stay crisp.
+    double fx = horizontal_ratio * static_cast<double>(_width - 1);
+    double fy = vertical_ratio * static_cast<double>(_height - 1);
+    if (fx < 0.0)
+      fx = 0.0;
+    if (fy < 0.0)
+      fy = 0.0;
+    if (fx > static_cast<double>(_width - 1))
+      fx = static_cast<double>(_width - 1);
+    if (fy > static_cast<double>(_height - 1))
+      fy = static_cast<double>(_height - 1);
+    const auto x0 = static_cast<unsigned int>(fx);
+    const auto y0 = static_cast<unsigned int>(fy);
+    const auto x1 = std::min(x0 + 1, _width - 1);
+    const auto y1 = std::min(y0 + 1, _height - 1);
+    const double tx = fx - static_cast<double>(x0);
+    const double ty = fy - static_cast<double>(y0);
+    const double weights[4] = {
+      (1.0 - tx) * (1.0 - ty), tx * (1.0 - ty),
+      (1.0 - tx) * ty, tx * ty};
+    const size_t pixels[4] = {
+      static_cast<size_t>(y0) * _width + x0,
+      static_cast<size_t>(y0) * _width + x1,
+      static_cast<size_t>(y1) * _width + x0,
+      static_cast<size_t>(y1) * _width + x1};
 
-    double range = _ranges[pixel];
-    const bool hit = std::isfinite(range) && range >= min_range_ &&
-      range <= max_range_;
+    double range = 0.0;
+    double weight_sum = 0.0;
+    for (int c = 0; c < 4; ++c)
+    {
+      const double corner = _ranges[pixels[c]];
+      if (std::isfinite(corner) && corner >= min_range_ &&
+          corner <= max_range_)
+      {
+        range += weights[c] * corner;
+        weight_sum += weights[c];
+      }
+    }
+    const bool hit = weight_sum > 0.0;
     if (!hit && !use_inf_)
       continue;
     if (!hit)
       range = max_range_;
+    else
+      range /= weight_sum;
 
-    const double sampled_azimuth = angle_min_ +
-      static_cast<double>(column) / static_cast<double>(_width - 1) *
-      (angle_max_ - angle_min_);
-    const double sampled_elevation = vertical_angle_min_ +
-      static_cast<double>(row) / static_cast<double>(_height - 1) *
-      (vertical_angle_max_ - vertical_angle_min_);
-    const double cos_elevation = std::cos(sampled_elevation);
+    // Emit the point at the exact scan-pattern direction. Using the
+    // pixel-grid angle instead would quantize every direction to the
+    // depth-image resolution (0.2 deg here): many pattern points would
+    // collapse onto the same pixel direction and the fine structure of
+    // the measured HAP pattern would be destroyed. The depth image is
+    // only used to look up the range.
+    const double cos_elevation = std::cos(scan.elevation);
 
     LivoxRayResult result;
-    result.point.Set(range * cos_elevation * std::cos(sampled_azimuth),
-                     range * cos_elevation * std::sin(sampled_azimuth),
-                     range * std::sin(sampled_elevation));
+    result.point.Set(range * cos_elevation * std::cos(azimuth),
+                     range * cos_elevation * std::sin(azimuth),
+                     range * std::sin(scan.elevation));
     result.intensity = hit ? 100.0 : 0.0;
     result.offset_time = static_cast<uint32_t>(std::min(
       point_period_ns_ * static_cast<double>(offset),

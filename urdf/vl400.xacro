@@ -1,4 +1,3 @@
-
 <robot name="vl400" xmlns:xacro="https://www.ros.org/wiki/xacro">
 
   <xacro:property name="M_PI" value="3.14159"/>
@@ -484,11 +483,16 @@
         <color rgba="0.0 0.7 0.0 1"/>
       </material>
     </visual>
+  <!-- Box proxy matching the mesh AABB (1.98 x 0.53 x 1.27 m). A mesh
+       collision on the robot makes ODE take the trimesh-trimesh path
+       against the terrain mesh: constant contact grinds the sim to a
+       halt and eventually crashes it. Primitive proxies keep the fast
+       collision path. -->
   <collision>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <origin rpy="0 0 0" xyz="0.99 0.265 0.634"/>
     <geometry>
-        <mesh filename="package://vl400_sim/meshes/Mulcher_v2.STL" scale="0.0012 0.0012 0.0012"/>
-      </geometry>
+      <box size="1.98 0.53 1.27"/>
+    </geometry>
   </collision>
 </link>
 

@@ -68,7 +68,7 @@ private:
   std::string gpu_topic_{"/livox/lidar/scan"};
   std::string ros_topic_{"/livox/lidar"};
   std::string frame_name_;
-  int sample_step_{20000};
+  int sample_step_{45300};
   int downsample_{1};
   int line_count_{4};
   size_t startup_skip_scans_{0};
@@ -77,7 +77,7 @@ private:
     PointCloudType::SENSOR_MSG_POINT_CLOUD2_LIVOXPOINTXYZRTLT};
   double min_dist_{0.1};
   double max_dist_{40.0};
-  double point_rate_{200000.0};
+  double point_rate_{453000.0};
   bool use_inf_{false};
   bool publish_point_time_offsets_{true};
 

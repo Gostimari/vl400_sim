@@ -3,9 +3,21 @@
     <model name="tree">
         <static>true</static>
         <link name="link">
-            <collision name="collision">
+            <!-- Primitive collision proxies (cylinder trunk + sphere
+                 canopy) instead of the mesh: ODE mesh-vs-mesh contacts
+                 grind the sim to a halt and eventually crash it
+                 (trimesh-trimesh contact hash overflow). The lidar is
+                 unaffected: it raycasts against the visual mesh. -->
+            <collision name="collision_trunk">
+                <pose>0 0 7 0 0 0</pose>
                 <geometry>
-                    <mesh><uri>mesh/tree_collision.glb</uri></mesh>
+                    <cylinder><radius>1.0</radius><length>14.0</length></cylinder>
+                </geometry>
+            </collision>
+            <collision name="collision_canopy">
+                <pose>0 0 10 0 0 0</pose>
+                <geometry>
+                    <sphere><radius>4.6</radius></sphere>
                 </geometry>
             </collision>
             <visual name="visual">

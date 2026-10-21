@@ -16,11 +16,15 @@
             <color rgba="0.75 0.75 0.75 1"/>
           </material>
         </visual>
+      <!-- Box proxy matching the mesh AABB (0.55 x 0.64 x 0.60 m).
+           Mesh collisions on the robot trigger the ODE trimesh-trimesh
+           path against the terrain mesh (grind + crash); see the note
+           on tool_link in vl400.xacro. -->
       <collision>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <origin rpy="0 0 0" xyz="0.272 0.318 0.411"/>
         <geometry>
-              <mesh filename="package://vl400_sim/meshes/Sentry.STL" scale="0.0012 0.0012 0.0012"/>
-          </geometry>
+          <box size="0.545 0.637 0.599"/>
+        </geometry>
       </collision>
     </link>
 
