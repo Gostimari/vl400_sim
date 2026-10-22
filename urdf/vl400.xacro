@@ -53,7 +53,11 @@
   </xacro:macro>
 
   <link name="chassis_link">
-   <xacro:box_inertial  x="${base_x_size}" y="${base_y_size}" z="${base_z_size}" mass="50" />
+   <!-- 1200 kg hull: ~333 kg/m^3 of bounding volume, in the band for a
+        compact tracked machine (real CTLs/tractors run 200-400). With
+        tracks, wheels, mulcher and panels the robot totals ~2.4 t,
+        giving ~21 kPa ground pressure on the two belt footprints. -->
+   <xacro:box_inertial  x="${base_x_size}" y="${base_y_size}" z="${base_z_size}" mass="1200" />
    <visual>
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
@@ -80,7 +84,7 @@
 
 <!-- #######################################################################################################-->
 <link name="right_wheel_link">
-   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="7" />
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="60" />
   <collision>
   <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
   <geometry>
@@ -98,7 +102,7 @@
 
 <!-- #######################################################################################################-->
 <link name="right_wheel_fake_link">
-   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="0.1" />
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="60" />
    <visual>
     <origin rpy="0 0 -1.5707" xyz="0 0 0"/>
     <geometry>
@@ -120,7 +124,7 @@
 <!-- #######################################################################################################-->
 
 <link name="left_wheel_link">
-   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="7" />
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="60" />
   <collision>
   <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
   <geometry>
@@ -137,7 +141,7 @@
 </joint>
 <!-- #######################################################################################################-->
 <link name="left_wheel_fake_link">
-   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="0.1" />
+   <xacro:cylinder_inertia  r="${wheel_radius}" l="${wheel_length}"  mass="60" />
    <visual>
     <origin rpy="0 0 1.5707" xyz="0 0 0"/>
     <geometry>
@@ -158,6 +162,8 @@
 
 <!-- #######################################################################################################-->
 <link name="support_right_wheel_link">
+  <!-- Support roller, ~5 kg (0.4 m dia x 0.3 m rubber roller). -->
+  <xacro:cylinder_inertia r="0.2" l="${wheel_length}" mass="5"/>
   <visual>
       <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
       <geometry>
@@ -183,6 +189,8 @@
 
 <!-- #######################################################################################################-->
 <link name="support_left_wheel_link">
+  <!-- Support roller, ~5 kg (0.4 m dia x 0.3 m rubber roller). -->
+  <xacro:cylinder_inertia r="0.2" l="${wheel_length}" mass="5"/>
   <visual>
       <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
       <geometry>
@@ -250,58 +258,63 @@
 </xacro:macro>
 
 <gazebo reference="track_left_wheel_link">
-  <mu1>0.7</mu1>
-  <mu2>150</mu2>
+  <!-- Rubber track on soil: ~1.0 longitudinal grip, ~0.6 lateral so
+       the machine skid-steers. fdir1 is lateral (y), so mu1 applies
+       laterally and mu2 longitudinally. -->
+  <mu1>0.6</mu1>
+  <mu2>1.0</mu2>
   <fdir1>0 1 0</fdir1>
 </gazebo>
 
 <gazebo reference="track_right_wheel_link">
-  <mu1>0.7</mu1>
-  <mu2>150</mu2>
+  <mu1>0.6</mu1>
+  <mu2>1.0</mu2>
   <fdir1>0 1 0</fdir1>
 </gazebo>
 
-<!-- Skid plates: on rough terrain the chassis belly, the tail stabilizer
-     and the support wheels can rest on bumps while the belt hangs in
-     the air. Near-zero friction lets those parts slide instead of
-     anchoring the robot; the belt supplies all the traction. Note the
+<!-- Non-driving contact surfaces. The hull has ~21 cm ground clearance
+     and the belt is the lowest point, so these only touch on large
+     bumps or side slopes; they get realistic material friction
+     (steel hull/stabilizer/mulcher ~0.3 on soil, rubber rollers and
+     road wheels ~0.8) while the belt supplies the traction. Note the
      URDF->SDF converter applies each block to the collisions of that
      exact link only, so every fixed-jointed body part needs its own
      block (they get lumped into chassis_link but keep their names). -->
 <gazebo reference="chassis_link">
-  <mu1>0.05</mu1>
-  <mu2>0.05</mu2>
+  <mu1>0.3</mu1>
+  <mu2>0.3</mu2>
 </gazebo>
 
 <gazebo reference="stabilizer_link">
-  <mu1>0.05</mu1>
-  <mu2>0.05</mu2>
+  <mu1>0.3</mu1>
+  <mu2>0.3</mu2>
 </gazebo>
 
 <gazebo reference="support_left_wheel_link">
-  <mu1>0.05</mu1>
-  <mu2>0.05</mu2>
+  <mu1>0.8</mu1>
+  <mu2>0.8</mu2>
 </gazebo>
 
 <gazebo reference="support_right_wheel_link">
-  <mu1>0.05</mu1>
-  <mu2>0.05</mu2>
+  <mu1>0.8</mu1>
+  <mu2>0.8</mu2>
 </gazebo>
 
 <gazebo reference="tool_link">
-  <mu1>0.05</mu1>
-  <mu2>0.05</mu2>
+  <mu1>0.3</mu1>
+  <mu2>0.3</mu2>
 </gazebo>
 
-<!-- Wheels inside the belt: spin freely if they ever touch the ground. -->
+<!-- Road wheels inside the belt: rubber, they sit ~9 mm above the
+     belt bottom and only touch on soft ground. -->
 <gazebo reference="right_wheel_link">
-  <mu1>0.05</mu1>
-  <mu2>0.05</mu2>
+  <mu1>0.8</mu1>
+  <mu2>0.8</mu2>
 </gazebo>
 
 <gazebo reference="left_wheel_link">
-  <mu1>0.05</mu1>
-  <mu2>0.05</mu2>
+  <mu1>0.8</mu1>
+  <mu2>0.8</mu2>
 </gazebo>
 
 <!-- Tracked-vehicle conversion: the track links carry the belt        -->
@@ -320,8 +333,11 @@
            itself sits ~1 m behind the drive wheel, which would tip the
            robot backwards onto its tail stabilizer). -->
       <origin xyz="1.38 0 0.3755"/>
-      <mass value="5"/>
-      <inertia ixx="0.37" ixy="0" ixz="0" iyy="0.55" iyz="0" izz="0.5"/>
+      <!-- 250 kg per side: rubber belt + steel grousers + rollers of a
+           ~1.9 m track. Inertia of a 2.0 x 0.3 x 0.9 m box about its
+           center. -->
+      <mass value="250"/>
+      <inertia ixx="18.75" ixy="0" ixz="0" iyy="100.21" iyz="0" izz="85.21"/>
     </inertial>
   <xacro:belt_collisions y_off="0.13"/>
 </link>
@@ -342,8 +358,11 @@
            itself sits ~1 m behind the drive wheel, which would tip the
            robot backwards onto its tail stabilizer). -->
       <origin xyz="1.38 0 0.3755"/>
-      <mass value="5"/>
-      <inertia ixx="0.37" ixy="0" ixz="0" iyy="0.55" iyz="0" izz="0.5"/>
+      <!-- 250 kg per side: rubber belt + steel grousers + rollers of a
+           ~1.9 m track. Inertia of a 2.0 x 0.3 x 0.9 m box about its
+           center. -->
+      <mass value="250"/>
+      <inertia ixx="18.75" ixy="0" ixz="0" iyy="100.21" iyz="0" izz="85.21"/>
     </inertial>
   <xacro:belt_collisions y_off="0.15"/>
 </link>
@@ -372,9 +391,9 @@
 <xacro:macro name="track_plate" params="side y_off prefix i">
   <link name="${prefix}_arm_${i}">
     <inertial>
-      <mass value="0.01"/>
+      <mass value="0.5"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+      <inertia ixx="5e-4" ixy="0" ixz="0" iyy="5e-4" iyz="0" izz="5e-4"/>
     </inertial>
   </link>
   <joint name="${prefix}_arm_j_${i}" type="continuous">
@@ -386,9 +405,11 @@
   </joint>
   <link name="${prefix}_plate_${i}">
     <inertial>
-      <mass value="0.01"/>
+      <!-- Steel grouser, ~1 kg; inertia of the 0.016 x 0.30 x 0.06
+           cleat box about its center. -->
+      <mass value="1.0"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+      <inertia ixx="0.0078" ixy="0" ixz="0" iyy="0.00032" iyz="0" izz="0.0075"/>
     </inertial>
     <!-- One cleat riding the continuous band. Link frame: x radial
          (away from the belt center), y lateral, z along the belt path.
@@ -437,6 +458,13 @@
 
 <!-- #######################################################################################################-->
 <link name="stetic_body_link">
+  <!-- Hood panel, ~40 kg; CoM at the mesh AABB center, inertia of the
+       1.42 x 0.71 x 1.68 m box. -->
+  <inertial>
+    <origin xyz="0.717 0.354 0.849"/>
+    <mass value="40"/>
+    <inertia ixx="11.06" ixy="0" ixz="0" iyy="16.14" iyz="0" izz="8.42"/>
+  </inertial>
   <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -456,6 +484,13 @@
 
 <!-- #######################################################################################################-->
 <link name="stetic_tube_link">
+  <!-- Tubular frame, ~25 kg; CoM at the mesh AABB center, inertia of
+       the 1.64 x 0.80 x 1.30 m box. -->
+  <inertial>
+    <origin xyz="0.822 0.470 0.653"/>
+    <mass value="25"/>
+    <inertia ixx="4.89" ixy="0" ixz="0" iyy="9.13" iyz="0" izz="6.93"/>
+  </inertial>
   <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -474,6 +509,13 @@
 </joint>
 <!-- #######################################################################################################-->
 <link name="tool_link">
+  <!-- Mulcher head, ~400 kg (2 m wide drum + housing); CoM at the mesh
+       AABB center, inertia of the 1.98 x 0.53 x 1.27 m box. -->
+  <inertial>
+    <origin xyz="0.99 0.265 0.634"/>
+    <mass value="400"/>
+    <inertia ixx="63.13" ixy="0" ixz="0" iyy="184.44" iyz="0" izz="140.04"/>
+  </inertial>
   <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -504,6 +546,8 @@
 
 <!-- #######################################################################################################-->
 <link name="stabilizer_link">
+  <!-- Tail stabilizer, ~5 kg. -->
+  <xacro:box_inertial x="0.2" y="0.2" z="0.2" mass="5"/>
   <collision>
     <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>

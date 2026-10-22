@@ -112,17 +112,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Helper nodes from the original ROS 1 spawn.launch
-    fake_state = Node(
-        package='vl400_sim',
-        executable='fake_state_publisher.py',
-        output='screen',
-    )
-    gps_xy = Node(
-        package='vl400_sim',
-        executable='pub_GPS_XY_trator.py',
-        output='screen',
-    )
     magnetometer = Node(
         package='vl400_sim',
         executable='magnetometer_for_simulation.py',

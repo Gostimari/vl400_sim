@@ -7,6 +7,13 @@
 
     <!-- ######### SENTRY link ######### -->
     <link name="sentry_link">
+      <!-- Sensor mast, ~3 kg; CoM at the mesh AABB center, inertia of
+           the 0.545 x 0.637 x 0.599 m box. -->
+      <inertial>
+        <origin xyz="0.272 0.318 0.411"/>
+        <mass value="3"/>
+        <inertia ixx="0.191" ixy="0" ixz="0" iyy="0.164" iyz="0" izz="0.176"/>
+      </inertial>
       <visual>
           <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
@@ -35,8 +42,8 @@
     </joint>
 
     <gazebo reference="sentry_link">
-      <mu1>0.05</mu1>
-      <mu2>0.05</mu2>
+      <mu1>0.3</mu1>
+      <mu2>0.3</mu2>
     </gazebo>
 
     <!--#########   DURO LINK (IMU) #########-->
@@ -71,9 +78,9 @@
           <gz_frame_id>imu_link</gz_frame_id>
           <imu>
             <angular_velocity>
-              <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></x>
-              <y><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></y>
-              <z><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></z>
+              <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-3</stddev></noise></x>
+              <y><noise type="gaussian"><mean>0.0</mean><stddev>2e-3</stddev></noise></y>
+              <z><noise type="gaussian"><mean>0.0</mean><stddev>2e-3</stddev></noise></z>
             </angular_velocity>
             <linear_acceleration>
               <x><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></x>
@@ -151,7 +158,10 @@
     <!-- Livox HAP -->
     <xacro:include filename="$(find vl400_sim)/urdf/livox_hap.xacro"/>
     <xacro:livox_hap parent="sentry_link" name="livox_hap" topic="/livox_hap" ros_topic="/livox/lidar/pointcloud2" frame_id="livox_hap_link">
-      <origin xyz="0.47 0.30 0.41" rpy="-1.5707 0 0"/>
+      <origin xyz="0.45 0.33 0.41" rpy="-1.5707 0 0"/>
     </xacro:livox_hap>
+
+    <!-- Zed 2i Camera -->
+    <xacro:include filename="$(find vl400_sim)/urdf/zed2i_camera.xacro"/>
 
 </robot>

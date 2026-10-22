@@ -1,0 +1,309 @@
+<robot name='zed2i'>
+    <!-- ZED2i IMU as a native gz-sim sensor. The gz-sim-imu-system is
+         loaded by sentry.xacro; this publishes gz.msgs.IMU on /zed2/imu,
+         bridged to ROS by config/bridge.yaml. -->
+    <gazebo reference="zed2_imu_link">
+       <sensor name="zed2i_imu_sensor" type="imu">
+           <always_on>true</always_on>
+           <update_rate>100</update_rate>
+           <visualize>true</visualize>
+           <topic>/zed2/imu</topic>
+           <gz_frame_id>zed2_imu_link</gz_frame_id>
+           <imu>
+               <angular_velocity>
+                   <x>
+                       <noise type="gaussian">
+                           <mean>0.0</mean>
+                           <stddev>2e-4</stddev>
+                           <bias_mean>0.0000075</bias_mean>
+                           <bias_stddev>0.0000008</bias_stddev>
+                       </noise>
+                   </x>
+                   <y>
+                       <noise type="gaussian">
+                           <mean>0.0</mean>
+                           <stddev>2e-4</stddev>
+                           <bias_mean>0.0000075</bias_mean>
+                           <bias_stddev>0.0000008</bias_stddev>
+                       </noise>
+                   </y>
+                   <z>
+                       <noise type="gaussian">
+                           <mean>0.0</mean>
+                           <stddev>2e-4</stddev>
+                           <bias_mean>0.0000075</bias_mean>
+                           <bias_stddev>0.0000008</bias_stddev>
+                       </noise>
+                   </z>
+               </angular_velocity>
+               <linear_acceleration>
+                   <x>
+                       <noise type="gaussian">
+                           <mean>0.0</mean>
+                           <stddev>1.7e-2</stddev>
+                           <bias_mean>0.1</bias_mean>
+                           <bias_stddev>0.001</bias_stddev>
+                       </noise>
+                   </x>
+                   <y>
+                       <noise type="gaussian">
+                           <mean>0.0</mean>
+                           <stddev>1.7e-2</stddev>
+                           <bias_mean>0.1</bias_mean>
+                           <bias_stddev>0.001</bias_stddev>
+                       </noise>
+                   </y>
+                   <z>
+                       <noise type="gaussian">
+                           <mean>0.0</mean>
+                           <stddev>1.7e-2</stddev>
+                           <bias_mean>0.1</bias_mean>
+                           <bias_stddev>0.001</bias_stddev>
+                       </noise>
+                   </z>
+               </linear_acceleration>
+           </imu>
+       </sensor>
+   </gazebo>
+
+    <link name="zed2_imu_link"/>
+     <joint name="zed2_imu_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/> <!-- 23.83 degree tilt -->
+      <parent link="zed2_camera_center"/>
+      <child link="zed2_imu_link"/>
+    </joint>
+
+    <!-- Zed2i camera joints -->
+    <joint name="zed2_camera_center_joint" type="fixed">
+      <parent link="sentry_link"/>
+      <child link="zed2_camera_center"/>
+      <origin xyz="0.48 0.25 0.415" rpy="1.57 3.172637657 3.14"/>
+    </joint>
+
+  <link name="zed2_camera_center">
+      <inertial>
+        <mass value="0.16140"/>
+        <origin xyz="0 0 0"/>
+        <inertia
+          ixx="0.0003947" ixy="0.0" ixz="3.3365e-8"
+          iyy="2.417e-5" iyz="0.0"
+          izz="0.0003973"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="package://vl400_sim/meshes/ZED2.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://vl400_sim/meshes/ZED2.dae"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="zed2_left_camera_joint" type="fixed">
+      <parent link="zed2_camera_center"/>
+      <child link="zed2_left_camera_frame"/>
+      <origin xyz="0 0.06 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="zed2_left_camera_frame" />
+
+    <joint name="zed2_left_camera_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
+      <parent link="zed2_left_camera_frame"/>
+      <child link="zed2_left_camera_optical_frame"/>
+    </joint>
+
+    <link name="zed2_left_camera_optical_frame"/>
+
+    <joint name="zed2_left_camera_depth_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="-1.57 0.0 -1.57"/>
+      <parent link="zed2_left_camera_optical_frame"/>
+      <child link="zed2_left_camera_depth_frame"/>
+    </joint>
+
+    <link name="zed2_left_camera_depth_frame"/>
+
+
+    <joint name="zed2_right_camera_joint" type="fixed">
+      <parent link="zed2_camera_center"/>
+      <child link="zed2_right_camera_frame"/>
+      <origin xyz="0 -0.06 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="zed2_right_camera_frame" />
+
+    <joint name="zed2_right_camera_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
+      <parent link="zed2_right_camera_frame"/>
+      <child link="zed2_right_camera_optical_frame"/>
+    </joint>
+
+    <link name="zed2_right_camera_optical_frame"/>
+
+
+    <joint name="zed2_mag_joint" type="fixed">
+      <parent link="zed2_camera_center"/>
+      <child link="zed2_mag_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="zed2_mag_link" />
+
+    <joint name="zed2_baro_joint" type="fixed">
+      <parent link="zed2_camera_center"/>
+      <child link="zed2_baro_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="zed2_baro_link" />
+
+    <joint name="zed2_temp_left_joint" type="fixed">
+      <parent link="zed2_left_camera_frame"/>
+      <child link="zed2_temp_left_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="zed2_temp_left_link" />
+
+    <joint name="zed2_temp_right_joint" type="fixed">
+        <parent link="zed2_right_camera_frame"/>
+        <child link="zed2_temp_right_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="zed2_temp_right_link" />
+
+
+    <!-- Cameras are attached to the *_optical_frame links because gz-sim
+         cameras render in the optical convention (+Z forward, +X right,
+         +Y down), which is how those frames are oriented. Attaching to
+         the *_camera_frame links (body convention, +X forward) would make
+         the gz-sim cameras look straight up. The classic
+         libgazebo_ros_camera.so / libgazebo_ros_imu_sensor.so plugins were
+         removed (they do not exist in gz-sim); the sensors publish gz
+         topics that config/bridge.yaml forwards to ROS. -->
+    <gazebo reference="zed2_left_camera_optical_frame">
+
+      <sensor type="camera" name="zed2_left_raw_camera">
+        <always_on>true</always_on>
+        <update_rate>30.0</update_rate>
+        <visualize>false</visualize>
+        <topic>/zed2/left_raw/image</topic>
+        <gz_frame_id>zed2_left_camera_optical_frame</gz_frame_id>
+        <camera name="zed2_left_raw">
+          <horizontal_fov>1.7633</horizontal_fov>
+          <image>
+            <width>2560</width>
+            <height>1440</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>800</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+          <distortion>
+            <k1>-0.043693598</k1>
+            <k2>0.0146164996</k2>
+            <p1>-0.006573319</p1>
+            <p2>-0.000216900</p2>
+            <k3>0.000084328</k3>
+            <center>0.5 0.5</center>
+          </distortion>
+        </camera>
+      </sensor>
+
+      <sensor type="depth" name="zed2_left_camera">
+        <always_on>true</always_on>
+        <update_rate>15.0</update_rate>
+        <visualize>false</visualize>
+        <topic>/zed2/depth/image</topic>
+        <gz_frame_id>zed2_left_camera_depth_frame</gz_frame_id>
+        <camera name="zed2_left">
+          <horizontal_fov>1.7633</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <gazebo reference="zed2_right_camera_optical_frame">
+
+      <sensor type="camera" name="zed2_right_raw_camera">
+        <always_on>true</always_on>
+        <update_rate>30.0</update_rate>
+        <visualize>false</visualize>
+        <topic>/zed2/right_raw/image</topic>
+        <gz_frame_id>zed2_right_camera_optical_frame</gz_frame_id>
+        <camera name="zed2_right_raw">
+          <horizontal_fov>1.7633</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+          <distortion>
+            <k1>-0.040993299</k1>
+            <k2>0.009593590</k2>
+            <p1>-0.004429849</p1>
+            <p2>0.000192024</p2>
+            <k3>-0.000320880</k3>
+            <center>0.5 0.5</center>
+          </distortion>
+        </camera>
+      </sensor>
+
+      <sensor type="camera" name="zed2_right_camera">
+        <always_on>true</always_on>
+        <update_rate>30.0</update_rate>
+        <visualize>false</visualize>
+        <topic>/zed2/right/image</topic>
+        <gz_frame_id>zed2_right_camera_optical_frame</gz_frame_id>
+        <camera name="zed2_right">
+          <horizontal_fov>1.7633</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo>
+
+</robot>

@@ -99,8 +99,6 @@ install(DIRECTORY
 )
 
 install(PROGRAMS
-  scripts/fake_state_publisher.py
-  scripts/pub_GPS_XY_trator.py
   scripts/magnetometer_for_simulation.py
   DESTINATION lib/${PROJECT_NAME}
 )

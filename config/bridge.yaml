@@ -13,6 +13,15 @@
   gz_type_name: "gz.msgs.Odometry"
   direction: GZ_TO_ROS
 
+# Ground-truth odometry from the TrackedVehicle system (includes
+# track slip), as opposed to /odom which is the slip-free kinematic
+# estimate integrated from /cmd_vel by the visual DiffDrive plugin.
+- ros_topic_name: "odom_tracked"
+  gz_topic_name: "/odom_tracked"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+
 - ros_topic_name: "clock"
   gz_topic_name: "/clock"
   ros_type_name: "rosgraph_msgs/msg/Clock"
@@ -66,4 +75,71 @@
   gz_topic_name: "/livox_hap/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# --- ZED2i stereo camera (native gz-sim sensors, urdf/zed2i_camera.xacro) ---
+# Each camera publishes its image on /zed2/<cam>/image (gz.msgs.Image) and
+# its intrinsics on /zed2/<cam>/camera_info (gz.msgs.CameraInfo). The depth
+# camera also publishes a point cloud on /zed2/depth/image/points
+# (gz.msgs.PointCloudPacked). ROS names follow the ZED / classic-plugin
+# conventions.
+
+- ros_topic_name: "zed2/left_raw/image_raw_color"
+  gz_topic_name: "/zed2/left_raw/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/left_raw/camera_info"
+  gz_topic_name: "/zed2/left_raw/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/right_raw/image_raw_color"
+  gz_topic_name: "/zed2/right_raw/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/right_raw/camera_info"
+  gz_topic_name: "/zed2/right_raw/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/right/image_rect_color"
+  gz_topic_name: "/zed2/right/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/right/camera_info"
+  gz_topic_name: "/zed2/right/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/depth/depth_registered"
+  gz_topic_name: "/zed2/depth/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/depth/camera_info"
+  gz_topic_name: "/zed2/depth/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/point_cloud/cloud_registered"
+  gz_topic_name: "/zed2/depth/image/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "zed2/imu"
+  gz_topic_name: "/zed2/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
