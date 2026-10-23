@@ -219,8 +219,8 @@
      in the track link frame. Lateral offset (y) aligns the belt with the
      wheels: left track link sits at y=+0.70, right at y=-0.98, wheels at
      +/-0.83. Friction is applied to all belt collisions via the
-     <gazebo reference> blocks below (high longitudinal grip, low
-     lateral grip so the robot skid-steers). -->
+     <gazebo reference> blocks below (isotropic high-grip track rubber,
+     see the values there). -->
 <xacro:macro name="belt_collisions" params="y_off">
   <!-- Continuous track band: one closed mesh (generated at build time by
        belt_band_generator) wrapping around all three belt wheels. It is
@@ -258,18 +258,23 @@
 </xacro:macro>
 
 <gazebo reference="track_left_wheel_link">
-  <!-- Rubber track on soil: ~1.0 longitudinal grip, ~0.6 lateral so
-       the machine skid-steers. fdir1 is lateral (y), so mu1 applies
-       laterally and mu2 longitudinally. -->
-  <mu1>0.6</mu1>
-  <mu2>1.0</mu2>
-  <fdir1>0 1 0</fdir1>
+  <!-- Rubber belt with steel grousers on soil. Rubber on dry soil is
+       ~0.6-0.8, but grousers mechanically engage the soil, giving a
+       coefficient of traction around 1.0-1.2 (tracked machines climb
+       ~40-50 deg slopes in reality). 1.2 holds the robot static on
+       slopes up to atan(1.2) ~ 50 deg, covering the forest terrains
+       (steepest sustained slopes: ~29 deg easy, ~37-47 deg medium).
+       Isotropic on purpose: the grip must not depend on the engine
+       honouring anisotropic friction, and skid steering still works
+       (TrackedVehicle forces lateral slip via differential track
+       speeds). -->
+  <mu1>1.2</mu1>
+  <mu2>1.2</mu2>
 </gazebo>
 
 <gazebo reference="track_right_wheel_link">
-  <mu1>0.6</mu1>
-  <mu2>1.0</mu2>
-  <fdir1>0 1 0</fdir1>
+  <mu1>1.2</mu1>
+  <mu2>1.2</mu2>
 </gazebo>
 
 <!-- Non-driving contact surfaces. The hull has ~21 cm ground clearance

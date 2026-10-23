@@ -56,11 +56,12 @@
   gz_type_name: "gz.msgs.Magnetometer"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "velodyne_points"
-  gz_topic_name: "/velodyne/points"
-  ros_type_name: "sensor_msgs/msg/PointCloud2"
-  gz_type_name: "gz.msgs.PointCloudPacked"
-  direction: GZ_TO_ROS
+# Velodyne LiDAR
+# - ros_topic_name: "velodyne_points"
+#   gz_topic_name: "/velodyne/points"
+#   ros_type_name: "sensor_msgs/msg/PointCloud2"
+#   gz_type_name: "gz.msgs.PointCloudPacked"
+#   direction: GZ_TO_ROS
 
 # - ros_topic_name: "velodyne_scan"
 #   gz_topic_name: "/velodyne"
