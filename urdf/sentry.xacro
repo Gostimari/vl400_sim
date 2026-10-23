@@ -65,7 +65,7 @@
       </link>
 
       <joint name="joint_imu" type="fixed">
-        <origin xyz="0.27 0.40 0.41" rpy="-1.5707 0 0"/>
+        <origin xyz="0.27 0.30 0.41" rpy="-1.5707 0 0"/>
         <parent link="sentry_link"/>
         <child link="imu_link"/>
       </joint>
@@ -125,8 +125,8 @@
       </link>
 
       <joint name="joint_gps" type="fixed">
-        <origin xyz="0 0 0.055" rpy="0 0 0"/>
-        <parent link="imu_link"/>
+        <origin xyz="0.27 0.45 0.41" rpy="-1.59 0 0"/>
+        <parent link="sentry_link"/>
         <child link="gps_link"/>
       </joint>
 

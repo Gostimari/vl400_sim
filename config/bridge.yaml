@@ -30,9 +30,12 @@
 
 - ros_topic_name: "joint_states"
   # gz-sim scopes the JointStatePublisher topic under the world and
-  # model name: /world/<world>/model/<model>/joint_state. The default
-  # launch uses world forest_ground-100-easy and spawns the robot as
-  # model vl400 (change this if you launch a different world).
+  # model name: /world/<world>/model/<model>/joint_state. The world
+  # name is the INTERNAL <world name="..."> attribute of the world
+  # file (may differ from the filename; robot.world is "default").
+  # The launch (gazebo.launch.py) patches this entry with the name of
+  # the world it actually started, so no manual edit is needed when
+  # switching worlds.
   gz_topic_name: "/world/forest_ground-100-easy/model/vl400/joint_state"
   ros_type_name: "sensor_msgs/msg/JointState"
   gz_type_name: "gz.msgs.Model"

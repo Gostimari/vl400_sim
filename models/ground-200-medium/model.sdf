@@ -9,6 +9,19 @@
                         <uri>model://ground-200-medium/mesh/terrain.stl</uri>
                     </mesh>
                 </geometry>
+                <!-- Firm soil with vegetation debris; pairs with the
+                     robot belt grousers. Both surfaces must carry the
+                     high value: the engine combines the pair
+                     conservatively (~ min), and the real machine is
+                     rated for ~60 deg slopes. -->
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>2.0</mu>
+                            <mu2>2.0</mu2>
+                        </ode>
+                    </friction>
+                </surface>
             </collision>
             <visual name="visual">
                 <geometry>

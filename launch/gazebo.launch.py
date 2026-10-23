@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import tempfile
 
@@ -104,13 +105,40 @@ def generate_launch_description():
 
     spawn = OpaqueFunction(function=launch_spawn)
 
-    # ROS <-> Gazebo transport bridge (see config/bridge.yaml)
-    bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        parameters=[{'config_file': bridge_file, 'use_sim_time': True}],
-        output='screen',
-    )
+    # ROS <-> Gazebo transport bridge (see config/bridge.yaml).
+    # The /joint_states bridge entry is world-scoped: gz publishes it as
+    # /world/<world>/model/vl400/joint_state, where <world> is the
+    # INTERNAL name of the world file (<world name="...">, which can
+    # differ from the filename, e.g. robot.world is "default"). The
+    # config file carries the default world's name; patch in the name of
+    # the world actually being launched so /joint_states (and with it
+    # the wheel/track TF on the ROS side) keeps flowing in every world.
+    def launch_bridge(context):
+        world_path = world.perform(context)
+        world_name = 'forest_ground-100-easy'
+        try:
+            with open(world_path) as wf:
+                match = re.search(r'<world\s+name="([^"]+)"', wf.read())
+            if match:
+                world_name = match.group(1)
+        except OSError:
+            pass
+        with open(bridge_file) as bf:
+            bridge_cfg = bf.read()
+        bridge_cfg = bridge_cfg.replace(
+            '/world/forest_ground-100-easy/model/vl400/joint_state',
+            '/world/' + world_name + '/model/vl400/joint_state')
+        bridge_out = os.path.join(tempfile.gettempdir(), 'vl400_bridge.yaml')
+        with open(bridge_out, 'w') as f:
+            f.write(bridge_cfg)
+        return [Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            parameters=[{'config_file': bridge_out, 'use_sim_time': True}],
+            output='screen',
+        )]
+
+    bridge = OpaqueFunction(function=launch_bridge)
 
     magnetometer = Node(
         package='vl400_sim',

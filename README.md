@@ -25,6 +25,38 @@ scripts/                      magnetometer_for_simulation.py helper
 meshes/                       robot / prop mesh assets
 ```
 
+## Cloning this repository (git LFS)
+
+All heavy mesh assets (`*.stl`, `*.STL`, `*.dae`, `*.obj`, `*.glb`,
+`*.zip` — the robot meshes and the ~3.7 GB terrain models) are stored
+with **git LFS**. Install and enable it **before** the first clone or
+pull, otherwise the working tree gets 130-byte LFS pointer files
+instead of the real meshes:
+
+```bash
+sudo apt install git-lfs
+git lfs install          # once per user / per clone
+git clone git@github.com:Gostimari/vl400_sim.git   # then clone or pull
+```
+
+How to tell the pointers are there (the simulation does not launch):
+
+- Mesh files are tiny (~130 B) and start with
+  `version https://git-lfs.github.com/spec/v1`.
+- gz-sim logs `Unable to read STL` / `Unable to load collada file`
+  and then crashes with `ODE INTERNAL ERROR 1 ... "vertices" failed`.
+
+Recovery if it ever happens:
+
+```bash
+git lfs pull            # fetch from remote + rewrite the working tree
+git lfs checkout        # or: restore from the local cache (.git/lfs)
+colcon build --packages-select vl400_sim   # install/ copies the meshes
+```
+
+Rebuild after any pull/checkout that touches the mesh files — `install/`
+holds copies, and gz-sim loads the meshes from there, not from `src/`.
+
 ## Dependencies
 
 All dependencies are declared in `package.xml`. The recommended way to
@@ -121,17 +153,15 @@ ros2 launch vl400_sim gazebo.launch.py \
   world:=/home/duarte/ros2_ws/src/vl400_sim/worlds/forest_ground-200-hard.world
 ```
 
-> **Important — update the bridge when you change the world.** The
-> `/joint_states` bridge in `config/bridge.yaml` is scoped to the world
-> name:
-> ```yaml
-> gz_topic_name: "/world/forest_ground-100-easy/model/vl400/joint_state"
-> ```
-> The pattern is `/world/<world_name>/model/vl400/joint_state`, where
-> `<world_name>` is the **internal** `<world name="...">` attribute of the
-> world file (see the table above — note `robot.world` is internally named
-> `default`). If you switch worlds and don't update this line,
-> `/joint_states` goes empty. Then rebuild so the install copy is updated:
+> **Joint states and the world.** The `/joint_states` bridge entry in
+> `config/bridge.yaml` is world-scoped: gz publishes it as
+> `/world/<world_name>/model/vl400/joint_state`, where `<world_name>` is
+> the **internal** `<world name="...">` attribute of the world file
+> (see the table above — note `robot.world` is internally named
+> `default`). The launch patches this name automatically from the
+> `world` argument, so switching worlds needs no manual edits — if
+> `/joint_states` ever looks empty, check that the world you passed
+> resolves and that you rebuilt after your last `src/` change:
 > ```bash
 > colcon build --packages-select vl400_sim
 > ```
