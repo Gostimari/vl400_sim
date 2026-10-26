@@ -275,6 +275,24 @@
       <cylinder radius="0.21" length="0.3"/>
     </geometry>
   </collision>
+  <!-- Upper "bump catcher" pad: a flat plate 7.5 cm above the belt
+       bottom, inside the belt loop profile. On smooth ground it
+       never touches (the belt box carries the machine, exactly as
+       before). On rough mesh terrain, bumps that poke past the flat
+       belt box - the peaks the machine would otherwise teeter on -
+       hit this pad and are gripped too (it is part of the same
+       track link, so it gets the belt friction). This gives the
+       tracks extra grip on undulating ground WITHOUT adding any
+       kinematic freedom between hull and belt: an articulated
+       (bogie/slider) suspension was tested and it destabilizes the
+       TrackController moving-surface drive, so the hull->track chain
+       stays rigid. -->
+  <collision>
+    <origin rpy="0 0 0" xyz="1.155 ${y_off} 0.135"/>
+    <geometry>
+      <box size="0.9 0.28 0.04"/>
+    </geometry>
+  </collision>
 </xacro:macro>
 
 <gazebo reference="track_left_wheel_link">

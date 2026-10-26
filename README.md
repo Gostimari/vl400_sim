@@ -139,6 +139,9 @@ only need to point the `world` argument at a `.world` file.
 
 | file | world name (internal) | description |
 |---|---|---|
+| `forest_ground-50-easy.world` | `forest_ground-50-easy` | forest, 50 size, easy |
+| `forest_ground-50-medium.world` | `forest_ground-50-medium` | forest, 50 size, medium |
+| `forest_ground-50-hard.world` | `forest_ground-50-hard` | forest, 50 size, hard |
 | `forest_ground-100-easy.world` | `forest_ground-100-easy` | forest, 100 size, easy (**default**) |
 | `forest_ground-100-medium.world` | `forest_ground-100-medium` | forest, 100 size, medium |
 | `forest_ground-100-hard.world` | `forest_ground-100-hard` | forest, 100 size, hard |

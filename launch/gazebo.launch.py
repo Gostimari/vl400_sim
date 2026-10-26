@@ -17,7 +17,7 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('vl400_sim')
     xacro_file = os.path.join(pkg_share, 'urdf', 'vl400.xacro')
     bridge_file = os.path.join(pkg_share, 'config', 'bridge.yaml')
-    default_world = os.path.join(pkg_share, 'worlds', 'forest_ground-100-easy.world')
+    default_world = os.path.join(pkg_share, 'worlds', 'forest_ground-50-medium.world')
 
     # Let gz resolve package:// mesh URIs inside the URDF and
     # model:// URIs inside the world file.

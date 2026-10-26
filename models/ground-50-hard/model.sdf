@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+    <model name="terrain">
+        <static>true</static>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <mesh>
+                        <uri>model://ground-50-hard/mesh/terrain.stl</uri>
+                    </mesh>
+                </geometry>
+                <!-- Firm soil with vegetation debris; pairs with the
+                     robot belt grousers. Both surfaces must carry the
+                     high value: the engine combines the pair
+                     conservatively (~ min), and the real machine is
+                     rated for ~60 deg slopes. -->
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>2.0</mu>
+                            <mu2>2.0</mu2>
+                        </ode>
+                    </friction>
+                </surface>
+            </collision>
+            <visual name="visual">
+                <geometry>
+                    <mesh>
+                        <uri>model://ground-50-hard/mesh/terrain.obj</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <ambient>1.0 1.0 1.0 1</ambient>
+                    <diffuse>1.0 1.0 1.0 1</diffuse>
+                    <specular>0.1 0.1 0.1 1</specular>
+                    <pbr>
+                        <metal>
+                            <albedo_map>model://ground-50-hard/texture/povrch1projekt_fin_u1_v1_diffuse_2.png</albedo_map>
+                            <normal_map>model://ground-50-hard/texture/povrch1projekt_fin_u1_v1_normal.png</normal_map>
+                            <metalness>0.0</metalness>
+                        </metal>
+                    </pbr>
+                </material>
+            </visual>
+        </link>
+    </model>
+</sdf>
