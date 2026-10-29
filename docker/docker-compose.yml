@@ -1,0 +1,23 @@
+services:
+  vl400-jazzy:
+    build:
+      context: .
+      dockerfile: vl400-jazzy.Dockerfile
+    image: vl400-jazzy:latest
+    container_name: vl400-jazzy
+    hostname: vl400-jazzy
+    stdin_open: true
+    tty: true
+    network_mode: host
+    privileged: false
+    runtime: nvidia
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=${XAUTHORITY:-/tmp/.docker.xauth}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+    command: ros2 launch vl400_sim gazebo.launch.py

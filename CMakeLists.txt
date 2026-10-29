@@ -12,12 +12,31 @@ find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(ament_index_cpp REQUIRED)
-# gz-sim from the ROS 2 vendor packages (gz_sim_vendor & friends)
-find_package(gz-sim REQUIRED)
-find_package(gz-math REQUIRED)
-find_package(gz-msgs REQUIRED)
-find_package(gz-transport REQUIRED)
-find_package(gz-plugin REQUIRED COMPONENTS register)
+# gz-sim from the ROS 2 vendor packages. Lyrical ships the unsuffixed
+# configs (gz-sim, gz-math, ...); Jazzy ships the versioned ones
+# (gz-sim8, gz-math7, gz-msgs10, gz-transport13, gz-plugin2, with the
+# plugin register split into its own gz-plugin2-register config).
+# Detect once and map the link targets.
+find_package(gz-sim QUIET)
+if(gz-sim_FOUND)
+  set(GZ_SIM_TARGET gz-sim::core)
+  set(GZ_MATH_TARGET gz-math::core)
+  set(GZ_MSGS_TARGET gz-msgs::core)
+  set(GZ_TRANSPORT_TARGET gz-transport::core)
+  set(GZ_PLUGIN_TARGET gz-plugin::gz-plugin-register)
+else()
+  find_package(gz-sim8 REQUIRED)
+  find_package(gz-math7 REQUIRED)
+  find_package(gz-msgs10 REQUIRED)
+  find_package(gz-transport13 REQUIRED)
+  find_package(gz-plugin2 REQUIRED)
+  find_package(gz-plugin2-register REQUIRED)
+  set(GZ_SIM_TARGET gz-sim8::core)
+  set(GZ_MATH_TARGET gz-math7::core)
+  set(GZ_MSGS_TARGET gz-msgs10::core)
+  set(GZ_TRANSPORT_TARGET gz-transport13::core)
+  set(GZ_PLUGIN_TARGET gz-plugin2::register)
+endif()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CustomMessage.msg"
@@ -60,11 +79,11 @@ target_link_libraries(vl400_sim_plugin
   geometry_msgs::geometry_msgs
   tf2_ros::tf2_ros
   ament_index_cpp::ament_index_cpp
-  gz-sim::core
-  gz-math::core
-  gz-msgs::core
-  gz-transport::core
-  gz-plugin::gz-plugin-register
+  ${GZ_SIM_TARGET}
+  ${GZ_MATH_TARGET}
+  ${GZ_MSGS_TARGET}
+  ${GZ_TRANSPORT_TARGET}
+  ${GZ_PLUGIN_TARGET}
 )
 
 install(TARGETS vl400_sim_plugin
@@ -79,8 +98,8 @@ add_library(vl400-track-visual-system SHARED src/track_visual/TrackVisual.cc)
 target_compile_features(vl400-track-visual-system PUBLIC cxx_std_17)
 target_link_libraries(vl400-track-visual-system
   PRIVATE
-    gz-sim::core
-    gz-plugin::gz-plugin-register
+    ${GZ_SIM_TARGET}
+    ${GZ_PLUGIN_TARGET}
 )
 
 install(TARGETS vl400-track-visual-system
