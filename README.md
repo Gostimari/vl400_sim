@@ -25,7 +25,40 @@ scripts/                      magnetometer_for_simulation.py helper
 meshes/                       robot / prop mesh assets
 ```
 
-## Cloning this repository (git LFS)
+## Installation
+
+### Docker (recommended)
+
+This is the **recommended way** to run the simulation — everything comes
+in a self-contained image and the host only needs Docker.
+
+```bash
+# Let the container's root user open windows on your display. Needed
+# once per login session (X forgets it on reboot/relogin); without it
+# the Gazebo GUI and the sensor rendering die with
+# "Authorization required, but no authorization protocol specified".
+xhost +local:root
+
+Go to the docker/ folder and run:
+
+docker compose up             # run, creates the container; Ctrl-C stops the simulation
+
+docker compose down           # stop, deletes the container
+```
+
+#### Jazzy and Lyrical compatibility
+
+The package builds on both distros unmodified. `CMakeLists.txt` detects
+which gz-sim configuration the distro provides — the unsuffixed vendor
+configs (`gz-sim`, `gz-math`, `gz-msgs`, `gz-transport`, `gz-plugin`) on
+Lyrical, the versioned ones (`gz-sim8`, `gz-math7`, `gz-msgs10`,
+`gz-transport13`, `gz-plugin2`, with the plugin register in its own
+`gz-plugin2-register` config) on Jazzy — and maps the link targets
+automatically, so switching distros needs no edits.
+
+## Manual install
+
+### Cloning this repository (git LFS)
 
 All heavy mesh assets (`*.stl`, `*.STL`, `*.dae`, `*.obj`, `*.glb`,
 `*.zip` — the robot meshes and the ~3.7 GB terrain models) are stored
@@ -51,13 +84,12 @@ Recovery if it ever happens:
 ```bash
 git lfs pull            # fetch from remote + rewrite the working tree
 git lfs checkout        # or: restore from the local cache (.git/lfs)
-colcon build --packages-select vl400_sim   # install/ copies the meshes
 ```
 
 Rebuild after any pull/checkout that touches the mesh files — `install/`
 holds copies, and gz-sim loads the meshes from there, not from `src/`.
 
-## Dependencies
+### Dependencies
 
 All dependencies are declared in `package.xml`. The recommended way to
 install them is `rosdep` (it reads `package.xml` directly, so this list
@@ -100,7 +132,7 @@ Notes:
   declared in `package.xml` but not required to run this simulation
   (joint states come from gz-sim, and no helper node uses scipy).
 
-## Build
+### Build
 
 ```bash
 cd ~/ros2_ws
@@ -108,7 +140,6 @@ colcon build --packages-select vl400_sim
 source install/setup.bash
 ```
 
-## Run
 
 ```bash
 # Full simulation (default world: forest_ground-100-easy)
@@ -129,7 +160,8 @@ Launch arguments:
 | `x` `y` `z` | `4` `10` `5` | robot spawn pose; `z` is the drop height |
 
 `z` is how high the robot is dropped at spawn — if it tumbles on spawn,
-lower it (e.g. `z:=3.4`).
+lower it (e.g. `z:=3.4`). The right value depends on the world's terrain
+at the spawn point — see **Choosing a world** below.
 
 ## Choosing a world
 
@@ -155,21 +187,6 @@ only need to point the `world` argument at a `.world` file.
 ros2 launch vl400_sim gazebo.launch.py \
   world:=/home/duarte/ros2_ws/src/vl400_sim/worlds/forest_ground-200-hard.world
 ```
-
-> **Joint states and the world.** The `/joint_states` bridge entry in
-> `config/bridge.yaml` is world-scoped: gz publishes it as
-> `/world/<world_name>/model/vl400/joint_state`, where `<world_name>` is
-> the **internal** `<world name="...">` attribute of the world file
-> (see the table above — note `robot.world` is internally named
-> `default`). The launch patches this name automatically from the
-> `world` argument, so switching worlds needs no manual edits — if
-> `/joint_states` ever looks empty, check that the world you passed
-> resolves and that you rebuilt after your last `src/` change:
-> ```bash
-> colcon build --packages-select vl400_sim
-> ```
-> (The launch reads worlds/urdf/config from `install/`, so after editing
-> any of those files in `src/` you must rebuild.)
 
 ## ROS topics
 
@@ -220,7 +237,7 @@ heading (deg) on `heading`.
 - Livox HAP: `livox_hap_link`
 - ZED2i optical: `zed2_left_camera_optical_frame`, `zed2_right_camera_optical_frame`
 - IMU: `imu_link`; ZED IMU: `zed2_imu_link`
-- GPS: `gps_link
+- GPS: `gps_link`
 
 ## Notes
 

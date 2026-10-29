@@ -20,4 +20,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-    command: ros2 launch vl400_sim gazebo.launch.py
+    command: >
+      bash -c "source /opt/ros/jazzy/setup.bash &&
+      source /root/ros2_ws/install/setup.bash &&
+      ros2 launch vl400_sim gazebo.launch.py"

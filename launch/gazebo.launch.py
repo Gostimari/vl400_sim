@@ -152,7 +152,7 @@ def generate_launch_description():
         DeclareLaunchArgument('organize_cloud', default_value='false'),
         DeclareLaunchArgument('x', default_value='4'),
         DeclareLaunchArgument('y', default_value='10'),
-        DeclareLaunchArgument('z', default_value='7'),
+        DeclareLaunchArgument('z', default_value='5'),
         DeclareLaunchArgument('headless', default_value='false'),
         robot_state_publisher,
         gz_sim,
