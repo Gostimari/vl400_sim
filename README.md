@@ -82,23 +82,23 @@ rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
-Or install them explicitly (ROS 2 Lyrical):
+Or install them explicitly (ROS 2):
 
 ```bash
 sudo apt install \
-  ros-lyrical-ament-cmake \
-  ros-lyrical-rosidl-default-generators ros-lyrical-rosidl-default-runtime \
-  ros-lyrical-std-msgs ros-lyrical-sensor-msgs ros-lyrical-geometry-msgs \
-  ros-lyrical-nav-msgs ros-lyrical-rosgraph-msgs \
-  ros-lyrical-rclcpp ros-lyrical-rclpy ros-lyrical-tf2-ros \
-  ros-lyrical-ament-index-cpp \
-  ros-lyrical-gz-sim-vendor ros-lyrical-gz-math-vendor \
-  ros-lyrical-gz-msgs-vendor ros-lyrical-gz-transport-vendor \
-  ros-lyrical-gz-plugin-vendor \
-  ros-lyrical-ros-gz-sim ros-lyrical-ros-gz-bridge \
-  ros-lyrical-xacro ros-lyrical-robot-state-publisher \
-  ros-lyrical-joint-state-publisher ros-lyrical-joint-state-publisher-gui \
-  ros-lyrical-rviz2 \
+  ros-$ROS_DISTRO-ament-cmake \
+  ros-$ROS_DISTRO-rosidl-default-generators ros-$ROS_DISTRO-rosidl-default-runtime \
+  ros-$ROS_DISTRO-std-msgs ros-$ROS_DISTRO-sensor-msgs ros-$ROS_DISTRO-geometry-msgs \
+  ros-$ROS_DISTRO-nav-msgs ros-$ROS_DISTRO-rosgraph-msgs \
+  ros-$ROS_DISTRO-rclcpp ros-$ROS_DISTRO-rclpy ros-$ROS_DISTRO-tf2-ros \
+  ros-$ROS_DISTRO-ament-index-cpp \
+  ros-$ROS_DISTRO-gz-sim-vendor ros-$ROS_DISTRO-gz-math-vendor \
+  ros-$ROS_DISTRO-gz-msgs-vendor ros-$ROS_DISTRO-gz-transport-vendor \
+  ros-$ROS_DISTRO-gz-plugin-vendor \
+  ros-$ROS_DISTRO-ros-gz-sim ros-$ROS_DISTRO-ros-gz-bridge \
+  ros-$ROS_DISTRO-xacro ros-$ROS_DISTRO-robot-state-publisher \
+  ros-$ROS_DISTRO-joint-state-publisher ros-$ROS_DISTRO-joint-state-publisher-gui \
+  ros-$ROS_DISTRO-rviz2 \
   python3-scipy
 ```
 
