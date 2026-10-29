@@ -1,29 +1,9 @@
 # vl400_sim (ROS 2)
 
-Gazebo (gz-sim / Harmonic) simulation of the **VL400** tracked mulcher
-robot in a forest world. The robot is a ~2.5 t skid-steer tracked
+Gazebo simulation of the **VL400** tracked mulcher
+robot in a forest world. The robot is a skid-steer tracked
 vehicle with animated tread plates, a front mulcher, a Livox HAP lidar,
-a ZED2i stereo camera, an IMU/GPS/magnetometer and a VLP-16 lidar — all
-bridged to **ROS 2 Lyrical** via `ros_gz`.
-
-## Layout
-
-```
-urdf/vl400.xacro              main robot: tracks, mulcher, controllers, tread animation hooks
-urdf/sentry.xacro             top "sentry" box: IMU, GPS, magnetometer, VLP-16 mount
-urdf/zed2i_camera.xacro       ZED2i stereo camera + IMU (native gz-sim sensors)
-urdf/livox_hap.xacro         Livox HAP lidar (gpu_lidar + custom Livox-pattern plugin)
-urdf/velodyne_vlp16.urdf.xacro  VLP-16 lidar macro
-worlds/                       gz-sim worlds (see "Choosing a world")
-models/                       forest props (tree, grass, ground, rock, bush, ...)
-launch/gazebo.launch.py       sim + ros_gz bridge + robot_state_publisher + helper
-config/bridge.yaml            ros_gz_bridge topic mappings
-scan_patterns/                Livox HAP scan pattern (HAP.csv)
-src/ include/                 custom gz-sim systems: track tread animation,
-                              Livox lidar simulation
-scripts/                      magnetometer_for_simulation.py helper
-meshes/                       robot / prop mesh assets
-```
+a ZED2i stereo camera, an IMU/GPS/magnetometer and a VLP-16 lidar.
 
 ## Installation
 
@@ -121,16 +101,6 @@ sudo apt install \
   ros-lyrical-rviz2 \
   python3-scipy
 ```
-
-Notes:
-- `ros-lyrical-ros-gz` is a metapackage that pulls in `ros-gz-sim`,
-  `ros-gz-bridge` and more — installing the two packages above is enough.
-- The `ros-lyrical-gz-*-vendor` packages provide the gz-sim C++ libraries
-  (`gz-sim`, `gz-math`, `gz-msgs`, `gz-transport`, `gz-plugin`) that this
-  package's custom plugins link against.
-- `ros-lyrical-joint-state-publisher(_gui)` and `python3-scipy` are
-  declared in `package.xml` but not required to run this simulation
-  (joint states come from gz-sim, and no helper node uses scipy).
 
 ### Build
 
