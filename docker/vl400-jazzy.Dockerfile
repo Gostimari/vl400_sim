@@ -52,7 +52,7 @@ RUN apt -y install \
     ros-$ROS_DISTRO-joint-state-publisher \
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-rviz2 \
-    ros-$ROS_DISTRO-cyclonedds
+    ros-$ROS_DISTRO-rmw-cyclonedds-cpp
 
 #Configure catkin workspace
 ENV ROS2_WS=/root/ros2_ws
@@ -74,6 +74,6 @@ RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
 
 # Clean-up
 WORKDIR /root
-RUN apt upgrade -y
+#RUN apt upgrade -y
 
 CMD ["bash"]
