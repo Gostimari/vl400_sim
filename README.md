@@ -127,11 +127,16 @@ Launch arguments:
 | `headless` | `false` | no GUI, offscreen rendering |
 | `gpu` | `true` | GPU-accelerated sensors (lidar/camera) |
 | `organize_cloud` | `false` | organize the VLP-16 cloud into rows (2D PointCloud2) |
-| `x` `y` `z` | `4` `10` `5` | robot spawn pose; `z` is the drop height |
+| `x` `y` `z` | `4` `10` `5` | robot spawn pose override; see below |
 
-`z` is how high the robot is dropped at spawn — if it tumbles on spawn,
-lower it (e.g. `z:=3.4`). The right value depends on the world's terrain
-at the spawn point — see **Choosing a world** below.
+The spawn pose is **automatic per world**: the launch looks up the world
+file in a per-world table (`spawn_poses` in `gazebo.launch.py`) and spawns
+the robot at a sensible height above the terrain at (4, 10). Passing
+explicit `x:=`/`y:=`/`z:=` launch arguments overrides the table.
+
+To add a new world (or move the spawn point), measure the terrain height
+`h` at the desired `x, y` and add an entry with `z ≈ h + 0.35` to the
+`spawn_poses` dict in `launch/gazebo.launch.py`.
 
 ## Choosing a world
 
@@ -155,7 +160,7 @@ only need to point the `world` argument at a `.world` file.
 ```bash
 # Example: run the 200-tree hard forest
 ros2 launch vl400_sim gazebo.launch.py \
-  world:=/home/duarte/ros2_ws/src/vl400_sim/worlds/forest_ground-200-hard.world
+  world:=/root/ros2_ws/src/vl400_sim/worlds/forest_ground-200-hard.world
 ```
 
 ## ROS topics

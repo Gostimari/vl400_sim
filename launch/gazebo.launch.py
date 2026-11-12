@@ -45,6 +45,21 @@ def generate_launch_description():
     z = LaunchConfiguration('z')
     headless = LaunchConfiguration('headless')
 
+    # Per-world spawn poses. The terrains have different ground
+    # elevations at the spawn area, so a fixed z either buries the
+    # robot inside the terrain mesh or drops it from far above.
+    spawn_poses = {
+        'forest_ground-50-easy.world':   (4.0, 10.0, 4.1),
+        'forest_ground-50-medium.world': (4.0, 10.0, 4.9),
+        'forest_ground-50-hard.world':   (4.0, 10.0, 5.5),
+        'forest_ground-100-easy.world':   (4.0, 10.0, 4.1),
+        'forest_ground-100-medium.world': (4.0, 10.0, 4.9),
+        'forest_ground-100-hard.world':   (4.0, 10.0, 5.6),
+        'forest_ground-200-easy.world':   (4.0, 10.0, 4.5),
+        'forest_ground-200-medium.world': (4.0, 10.0, 5.0),
+        'forest_ground-200-hard.world':   (4.0, 9.0, 5.4),
+    }
+
     robot_description = ParameterValue(
         Command([
             'xacro ', xacro_file,
@@ -77,11 +92,19 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Spawn the vl400 into the running world. The URDF (with the full
-    # tread-link chain) is too large for the create node's -string
-    # command line argument, so it is written to a file and spawned
-    # with -file instead.
+    # Spawn the vl400 into the running world.
     def launch_spawn(context):
+        # Pick a spawn pose from the per-world table; if the user gave
+        # explicit x/y/z launch arguments they take precedence.
+        world_path = world.perform(context)
+        user_x, user_y, user_z = (
+            x.perform(context), y.perform(context), z.perform(context))
+        if (user_x, user_y, user_z) != ('4', '10', '5'):
+            spawn_pose = (user_x, user_y, user_z)
+        else:
+            spawn_pose = spawn_poses.get(
+                os.path.basename(world_path),
+                (user_x, user_y, user_z))
         gpu_arg = gpu.perform(context)
         organize_arg = organize_cloud.perform(context)
         urdf_out = os.path.join(tempfile.gettempdir(), 'vl400_spawn.urdf')
@@ -96,9 +119,9 @@ def generate_launch_description():
             arguments=[
                 '-name', 'vl400',
                 '-file', urdf_out,
-                '-x', x.perform(context),
-                '-y', y.perform(context),
-                '-z', z.perform(context),
+                '-x', str(spawn_pose[0]),
+                '-y', str(spawn_pose[1]),
+                '-z', str(spawn_pose[2]),
             ],
             output='screen',
         )]

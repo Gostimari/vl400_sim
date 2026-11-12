@@ -22,11 +22,7 @@
         <gravity>0 0 -9.8</gravity>
         <!-- Reference for the navsat (GPS) sensor: lat/lon/alt of the
              world origin. The world frame is ENU (+x east, +y north),
-             so the robot's world position maps to small local offsets.
-             49.9 / 8.9 matches ORIGIN_LAT / ORIGIN_LON in
-             scripts/pub_GPS_XY_trator.py, which converts /fix into
-             local XY metres. Without this block the fix would report
-             lat/lon near 0/0. -->
+             so the robot's world position maps to small local offsets. -->
         <spherical_coordinates>
             <surface_model>EARTH_WGS84</surface_model>
             <latitude_deg>40.191740</latitude_deg>
