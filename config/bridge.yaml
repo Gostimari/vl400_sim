@@ -13,14 +13,23 @@
   gz_type_name: "gz.msgs.Odometry"
   direction: GZ_TO_ROS
 
-# Ground-truth odometry from the TrackedVehicle system (includes
-# track slip), as opposed to /odom which is the slip-free kinematic
-# estimate integrated from /cmd_vel by the visual DiffDrive plugin.
-- ros_topic_name: "odom_tracked"
-  gz_topic_name: "/odom_tracked"
+# Ground-truth odometry straight from the physics engine
+# (gz::sim::systems::OdometryPublisher in the robot xacro).
+# Unlike /odom above, this is the TRUE model pose: no slip,
+# no drift, no integration error.
+- ros_topic_name: "odom_ground_truth"
+  gz_topic_name: "/odom_ground_truth"
   ros_type_name: "nav_msgs/msg/Odometry"
   gz_type_name: "gz.msgs.Odometry"
   direction: GZ_TO_ROS
+
+# The TrackedVehicle system can also publish a slip-aware odometry
+# estimate; kept as reference, disabled by default.
+# - ros_topic_name: "odom_tracked"
+#   gz_topic_name: "/odom_tracked"
+#   ros_type_name: "nav_msgs/msg/Odometry"
+#   gz_type_name: "gz.msgs.Odometry"
+#   direction: GZ_TO_ROS
 
 - ros_topic_name: "clock"
   gz_topic_name: "/clock"
