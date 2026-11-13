@@ -1756,11 +1756,11 @@
         </include>
     
     <include>
-        <!-- Official gz-sim fog emitter (Fog Generator model): a 10x10 m
-             particle sheet pointing down, textured soft billboards. -->
+        <!-- Fog bank (Fog Generator model): stacked horizontal
+             translucent sheets hugging the ground around spawn. -->
         <uri>model://Fog Generator</uri>
         <name>fog_generator</name>
-        <pose>4 10 6.6 0 0 0</pose>
+        <pose>4.0 10.0 4.3 0 0 0</pose>
     </include>
 </world>
 </sdf>

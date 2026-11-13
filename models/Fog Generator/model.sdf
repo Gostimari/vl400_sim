@@ -1,29 +1,52 @@
 <?xml version="1.0" ?>
 <sdf version="1.6">
+  <!--
+    Ground fog generator.
+
+    gz-sim particle emitters always render as a narrow vertical plume
+    (velocity, lifetime and link rotation are not honoured by the
+    particle renderer), so this model builds the fog as a stack of
+    horizontal translucent sheets with a soft radial alpha texture.
+    The stack behaves like a volumetric fog bank that hugs the ground
+    in every direction, from above or from the side.
+
+    Sheets are pure visuals: no collision, no lidar returns, and the
+    robot can drive through them.
+  -->
   <model name="fog_generator">
-    <pose>0 0 0 0 3.14159 0</pose>
+    <pose>0 0 0 0 0 0</pose>
     <static>true</static>
     <link name="fog_link">
-      <particle_emitter name="emitter" type="box">
-        <emitting>true</emitting>
-        <size>10 10 0</size>
-        <particle_size>1 1 1</particle_size>
-        <lifetime>25</lifetime>
-        <min_velocity>0.1</min_velocity>
-        <max_velocity>0.2</max_velocity>
-        <scale_rate>0.5</scale_rate>
-        <rate>20</rate>
-        <material>
-          <diffuse>0.7 0.7 0.7</diffuse>
-          <specular>1.0 1.0 1.0</specular>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/fog.png</albedo_map>
-            </metal>
-          </pbr>
-        </material>
-        <color_range_image>materials/textures/fogcolors.png</color_range_image>
-      </particle_emitter>
+      <visual name="fog_layer_0">
+        <pose>0 0 0.05 0 0 0.0</pose>
+        <geometry><plane><normal>0 0 1</normal><size>26 26</size></plane></geometry>
+        <material><pbr><metal><albedo_map>materials/textures/fogsheet.png</albedo_map></metal></pbr><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0 0 0 0</specular></material>
+        <cast_shadows>false</cast_shadows>
+      </visual>
+      <visual name="fog_layer_1">
+        <pose>1.6 -1.2 0.6 0 0 0.55</pose>
+        <geometry><plane><normal>0 0 1</normal><size>23 23</size></plane></geometry>
+        <material><pbr><metal><albedo_map>materials/textures/fogsheet.png</albedo_map></metal></pbr><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0 0 0 0</specular></material>
+        <cast_shadows>false</cast_shadows>
+      </visual>
+      <visual name="fog_layer_2">
+        <pose>-1.4 1.1 1.15 0 0 1.35</pose>
+        <geometry><plane><normal>0 0 1</normal><size>20 20</size></plane></geometry>
+        <material><pbr><metal><albedo_map>materials/textures/fogsheet.png</albedo_map></metal></pbr><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0 0 0 0</specular></material>
+        <cast_shadows>false</cast_shadows>
+      </visual>
+      <visual name="fog_layer_3">
+        <pose>1.1 0.8 1.7 0 0 2.15</pose>
+        <geometry><plane><normal>0 0 1</normal><size>17 17</size></plane></geometry>
+        <material><pbr><metal><albedo_map>materials/textures/fogsheet.png</albedo_map></metal></pbr><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0 0 0 0</specular></material>
+        <cast_shadows>false</cast_shadows>
+      </visual>
+      <visual name="fog_layer_4">
+        <pose>-0.8 -1.0 2.25 0 0 0.9</pose>
+        <geometry><plane><normal>0 0 1</normal><size>14 14</size></plane></geometry>
+        <material><pbr><metal><albedo_map>materials/textures/fogsheet.png</albedo_map></metal></pbr><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0 0 0 0</specular></material>
+        <cast_shadows>false</cast_shadows>
+      </visual>
     </link>
   </model>
 </sdf>
