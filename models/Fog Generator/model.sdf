@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="fog_generator">
+    <pose>0 0 0 0 0 0</pose>
+    <static>true</static>
+    <!-- The emitter box axis order is remapped by the particle
+         renderer: size = <depth> <height(vert)> <width>, so a thin
+         height with wide depth/width gives horizontal ground fog. -->
+    <link name="fog_link">
+      <particle_emitter name="emitter" type="box">
+        <emitting>false</emitting>
+        <size>20 5 10</size>
+        <particle_size>2.5 2.5 2.5</particle_size>
+        <lifetime>3</lifetime>
+        <min_velocity>0.05</min_velocity>
+        <max_velocity>0.1</max_velocity>
+        <scale_rate>0.1</scale_rate>
+        <rate>150</rate>
+        <material>
+          <diffuse>0.7 0.7 0.7</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+              <albedo_map>materials/textures/fog.png</albedo_map>
+            </metal>
+          </pbr>
+        </material>
+        <color_range_image>materials/textures/fogcolors.png</color_range_image>
+      </particle_emitter>
+    </link>
+  </model>
+</sdf>

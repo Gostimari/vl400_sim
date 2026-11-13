@@ -163,6 +163,56 @@ ros2 launch vl400_sim gazebo.launch.py \
   world:=/root/ros2_ws/src/vl400_sim/worlds/forest_ground-200-hard.world
 ```
 
+## Fog generator
+
+Each forest world includes a `model://Fog Generator` next to the robot spawn:
+a gz-sim particle emitter that renders a wide, ~1 m high fog bank hugging
+the ground (`models/Fog Generator/model.sdf`). Key emitter parameters 
+(all in `model.sdf`):
+
+| parameter | value | effect |
+|---|---|---|
+| `<size>` | `20 0.2 20` | emission slab: wide and 0.2 m thick (axes remapped by the particle renderer) |
+| `<rate>` | `150` | puffs per second (density) |
+| `<particle_size>` | `2.5 2.5 2.5` | puff size in m |
+| `<min/max_velocity>` | `0.05` / `0.1` | slow upward drift |
+| `<lifetime>` | `3` | caps the visible height (rise = velocity x lifetime) |
+
+The `gz-sim-particle-emitter-system` plugin (loaded by every world) exposes
+the emitter command topic and honors lifetime/velocity, so the fog can be
+toggled and moved at runtime.
+
+Activate / deactivate the fog:
+
+```bash
+gz topic -t /model/fog_generator/link/fog_link/particle_emitter/emitter/cmd \
+  -m gz.msgs.ParticleEmitter -p 'emitting: {data: true}'
+```
+
+(`{data: false}` clears it within seconds.)
+
+Launch the simulation with the fog in another position (all three
+arguments are required; units are world coordinates, `z` should match the
+terrain height at that spot):
+
+```bash
+ros2 launch vl400_sim gazebo.launch.py fog_x:=20 fog_y:=20 fog_z:=5.2
+```
+
+Move the fog while the simulation is running (note: this is a gz
+*service*, not a topic, so it does not show in `gz topic -l`; replace
+`forest_ground-50-easy` with the internal name of your world):
+
+```bash
+gz service -s /world/forest_ground-50-easy/set_pose \
+  --reqtype gz.msgs.Pose --reptype gz.msgs.Boolean --timeout 300 \
+  --req 'name: "fog_generator", position: {x: 20, y: 20, z: 4.3}, orientation: {w: 1.0}'
+```
+
+The default position is defined by the `<include><pose>` of the Fog
+Generator in each `.world` file; without `fog_x/fog_y/fog_z` the fog
+stays there.
+
 ## ROS topics
 
 Bridged from Gazebo (`config/bridge.yaml`):

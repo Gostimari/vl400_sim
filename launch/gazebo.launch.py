@@ -6,7 +6,13 @@ import tempfile
 from ament_index_python.packages import get_package_prefix, get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.actions import (
+    DeclareLaunchArgument,
+    ExecuteProcess,
+    IncludeLaunchDescription,
+    OpaqueFunction,
+    TimerAction,
+)
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, IfElseSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
@@ -44,6 +50,9 @@ def generate_launch_description():
     y = LaunchConfiguration('y')
     z = LaunchConfiguration('z')
     headless = LaunchConfiguration('headless')
+    fog_x = LaunchConfiguration('fog_x')
+    fog_y = LaunchConfiguration('fog_y')
+    fog_z = LaunchConfiguration('fog_z')
 
     # Per-world spawn poses. The terrains have different ground
     # elevations at the spawn area, so a fixed z either buries the
@@ -163,6 +172,50 @@ def generate_launch_description():
 
     bridge = OpaqueFunction(function=launch_bridge)
 
+    # Optional fog repositioning. The Fog Generator model included by
+    # each world sits next to the robot spawn; passing fog_x/fog_y/fog_z
+    # (all three) moves it once Gazebo is up, via the gz set_pose
+    # service. With no arguments the fog stays where the world file
+    # placed it.
+    def launch_fog_pose(context):
+        fx, fy, fz = (
+            fog_x.perform(context), fog_y.perform(context), fog_z.perform(context))
+        if not (fx and fy and fz):
+            return []
+        if not (fx.replace('.', '').replace('-', '').isdigit()
+                and fy.replace('.', '').replace('-', '').isdigit()
+                and fz.replace('.', '').replace('-', '').isdigit()):
+            raise RuntimeError(
+                'fog_x/fog_y/fog_z must all be set to numbers, '
+                f'got: ({fx}, {fy}, {fz})')
+        world_path = world.perform(context)
+        world_name = 'forest_ground-100-easy'
+        try:
+            with open(world_path) as wf:
+                match = re.search(r'<world\s+name="([^"]+)"', wf.read())
+            if match:
+                world_name = match.group(1)
+        except OSError:
+            pass
+        req = (f'name: "fog_generator", '
+               f'position: {{x: {fx}, y: {fy}, z: {fz}}}, '
+               'orientation: {w: 1.0}')
+        move_fog = ExecuteProcess(
+            cmd=[
+                'gz', 'service',
+                '-s', f'/world/{world_name}/set_pose',
+                '--reqtype', 'gz.msgs.Pose',
+                '--reptype', 'gz.msgs.Boolean',
+                '--timeout', '300',
+                '--req', req,
+            ],
+            output='screen',
+        )
+        # Give Gazebo time to create the world and its services.
+        return [TimerAction(period=15.0, actions=[move_fog])]
+
+    fog_pose = OpaqueFunction(function=launch_fog_pose)
+
     magnetometer = Node(
         package='vl400_sim',
         executable='magnetometer_for_simulation.py',
@@ -177,9 +230,16 @@ def generate_launch_description():
         DeclareLaunchArgument('y', default_value='10'),
         DeclareLaunchArgument('z', default_value='5'),
         DeclareLaunchArgument('headless', default_value='false'),
+        DeclareLaunchArgument(
+            'fog_x', default_value='', description='Fog x (requires fog_y/fog_z)'),
+        DeclareLaunchArgument(
+            'fog_y', default_value='', description='Fog y (requires fog_x/fog_z)'),
+        DeclareLaunchArgument(
+            'fog_z', default_value='', description='Fog z (requires fog_x/fog_y)'),
         robot_state_publisher,
         gz_sim,
         spawn,
         bridge,
+        fog_pose,
         magnetometer,
     ])
