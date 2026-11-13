@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.6">
   <model name="fog_generator">
-    <pose>0 0 0 0 -1.5707 0</pose>
+    <pose>0 0 0 0 3.14159 0</pose>
     <static>true</static>
     <link name="fog_link">
       <particle_emitter name="emitter" type="box">
@@ -12,7 +12,7 @@
         <min_velocity>0.1</min_velocity>
         <max_velocity>0.2</max_velocity>
         <scale_rate>0.5</scale_rate>
-        <rate>5</rate>
+        <rate>20</rate>
         <material>
           <diffuse>0.7 0.7 0.7</diffuse>
           <specular>1.0 1.0 1.0</specular>
