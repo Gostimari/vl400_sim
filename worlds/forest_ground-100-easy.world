@@ -518,5 +518,13 @@
             <pose>36.6527 0.3365 1.8076 -0.0321 0.0368 1.5878</pose>
             <scale>0.811 0.811 0.811</scale>
         </include>
-    </world>
+    
+    <include>
+        <!-- Official gz-sim fog emitter (Fog Generator model): a 10x10 m
+             particle sheet pointing down, textured soft billboards. -->
+        <uri>model://Fog Generator</uri>
+        <name>fog_generator</name>
+        <pose>4 10 6.2 0 0 0</pose>
+    </include>
+</world>
 </sdf>
