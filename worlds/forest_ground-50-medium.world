@@ -190,8 +190,8 @@
         </include>
     
     <include>
-        <!-- Fog bank (Fog Generator model): stacked horizontal
-             translucent sheets hugging the ground around spawn. -->
+        <!-- Fog bank (Fog Generator model): grid of slow point
+             emitters producing low, wide ground fog around spawn. -->
         <uri>model://Fog Generator</uri>
         <name>fog_generator</name>
         <pose>4.0 10.0 4.7 0 0 0</pose>
