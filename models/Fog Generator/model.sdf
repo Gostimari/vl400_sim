@@ -25,7 +25,6 @@
             </metal>
           </pbr>
         </material>
-        <color_range_image>materials/textures/fogcolors.png</color_range_image>
       </particle_emitter>
     </link>
   </model>
