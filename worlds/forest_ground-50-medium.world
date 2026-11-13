@@ -191,13 +191,13 @@
             <pose>-19.3401 1.9823 1.4491 0.0378 -0.0280 0.8343</pose>
             <scale>1.006 1.006 1.006</scale>
         </include>
-    
+
     <include>
         <!-- Fog bank (Fog Generator model): grid of slow point
              emitters producing low, wide ground fog around spawn. -->
         <uri>model://Fog Generator</uri>
         <name>fog_generator</name>
-        <pose>4.0 10.0 4.7 0 0 0</pose>
+        <pose>15.0 10.0 7 0 0 0</pose>
     </include>
 </world>
 </sdf>

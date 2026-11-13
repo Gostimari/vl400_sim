@@ -190,7 +190,7 @@
              emitters producing low, wide ground fog around spawn. -->
         <uri>model://Fog Generator</uri>
         <name>fog_generator</name>
-        <pose>4.0 10.0 3.9 0 0 0</pose>
+        <pose>15.0 10.0 6 0 0 0</pose>
     </include>
 </world>
 </sdf>

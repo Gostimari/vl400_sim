@@ -8,8 +8,8 @@
          height with wide depth/width gives horizontal ground fog. -->
     <link name="fog_link">
       <particle_emitter name="emitter" type="box">
-        <emitting>true</emitting>
-        <size>20 0.2 20</size>
+        <emitting>false</emitting>
+        <size>20 5 10</size>
         <particle_size>2.5 2.5 2.5</particle_size>
         <lifetime>3</lifetime>
         <min_velocity>0.05</min_velocity>

@@ -167,9 +167,8 @@ ros2 launch vl400_sim gazebo.launch.py \
 
 Each forest world includes a `model://Fog Generator` next to the robot spawn:
 a gz-sim particle emitter that renders a wide, ~1 m high fog bank hugging
-the ground (`models/Fog Generator/model.sdf`). The bank is pure visuals: no
-collision, no lidar returns, and the robot drives through it. Key emitter
-parameters (all in `model.sdf`):
+the ground (`models/Fog Generator/model.sdf`). Key emitter parameters 
+(all in `model.sdf`):
 
 | parameter | value | effect |
 |---|---|---|
