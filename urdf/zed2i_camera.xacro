@@ -89,12 +89,21 @@
           iyy="2.417e-5" iyz="0.0"
           izz="0.0003973"/>
       </inertial>
+      <!-- The mesh is shifted 2 cm along the housing's viewing axis
+           (camera_center +X) so its front face sits BEHIND the optical
+           center. At the exact mesh origin the optical center ends up
+           inside the housing shell, and the shell (rendered by the
+           sensors) occludes ~34% of the depth image, leaving holes in
+           /zed2/depth/image/points. With this offset the front face is
+           inside the 0.02 m near clip and gets ignored. -->
       <visual>
+        <origin xyz="-0.02 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://vl400_sim/meshes/ZED2.dae"/>
         </geometry>
       </visual>
       <collision>
+        <origin xyz="-0.02 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://vl400_sim/meshes/ZED2.dae"/>
         </geometry>
@@ -176,14 +185,24 @@
     <link name="zed2_temp_right_link" />
 
 
-    <!-- Cameras are attached to the *_optical_frame links because gz-sim
-         cameras render in the optical convention (+Z forward, +X right,
-         +Y down), which is how those frames are oriented. Attaching to
-         the *_camera_frame links (body convention, +X forward) would make
-         the gz-sim cameras look straight up. The classic
+    <!-- gz-sim camera/depth sensors render along +X of the link they are
+         referenced to (image up = +Z, right = -Y). The camera_center joint
+         net-rotations cancel out against the sentry/chassis rotations, so
+         the net sensor orientation is close to identity vs base_link and
+         the cameras look level along the housing's +X. The optical_frames
+         are plain URDF frames with rpy=0 here (ROS optical convention
+         rpy=-pi/2,0,-pi/2 would rotate the gz sensors off-axis). The depth
+         sensor lives on the LEFT optical frame on purpose: the ZED
+         publishes depth registered to the left camera. The classic
          libgazebo_ros_camera.so / libgazebo_ros_imu_sensor.so plugins were
          removed (they do not exist in gz-sim); the sensors publish gz
-         topics that config/bridge.yaml forwards to ROS. -->
+         topics that config/bridge.yaml forwards to ROS. NOTE: fixed-joint
+         sublinks (zed2_*) are lumped into base_link by the URDF->SDF
+         conversion, so the sensors end up on base_link with a composed
+         pose; the housing mesh carries a -0.02 m X offset so its front
+         face stays inside the depth camera's 0.02 m near clip (otherwise
+         the shell is rendered by the sensors and punches holes into
+         /zed2/depth/image/points). -->
     <gazebo reference="zed2_left_camera_optical_frame">
 
       <sensor type="camera" name="zed2_left_raw_camera">
